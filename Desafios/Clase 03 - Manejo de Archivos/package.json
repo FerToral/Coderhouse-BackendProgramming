@@ -1,0 +1,12 @@
+{
+  "name": "clase-03---manejo-de-archivos",
+  "version": "1.0.0",
+  "description": "",
+  "main": "manejoDeArchivos.js",
+  "scripts": {
+    "start": "node manejoDeArchivos.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
