@@ -1,11 +1,11 @@
 
 
 import express from 'express'
-import { ProductManager } from './manejoDeArchivos'
+import { ProductManager } from './main.js'
 
 const app = express();
 const port = 8080;
-const productManager = new ProductManager('product.json');
+const productManager = new ProductManager('./products.json');
 
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
@@ -35,7 +35,10 @@ app.get('/products/:pid', async (req,res) =>{
     if(filteredProduct == 'Not Found'){
       res.status(404).send({status: "error", data: "Product Not Found"})
     }
-    res.status(200).send({ status: "success", data: filteredProduct})
+    else{
+      res.status(200).send({ status: "success", data: filteredProduct})
+    }
+ 
 
 })
 
