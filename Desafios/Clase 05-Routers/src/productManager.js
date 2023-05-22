@@ -29,33 +29,19 @@ export class ProductManager {
     async updateProduct(id, campo){
         this.#products = this.#products.map(p => p.id == id?{...p, ...campo, id: p.id}:p);
         const productsString = JSON.stringify(this.#products);
-        try {
-            await fs.promises.writeFile(this.path, productsString);
+        await fs.promises.writeFile(this.path, productsString);
            
-        } catch (error) {
-            
-            throw new Error('Error updating product');
-        }
-        
     }
     async deleteProduct(id){
         this.#products = this.#products.filter(p => p.id != id)
         const productsString = JSON.stringify(this.#products);
-        try {
-            await fs.promises.writeFile(this.path, productsString);
-           
-        } catch (error) {
-            
-            throw new Error('Error updating product');
-        }
-
+        await fs.promises.writeFile(this.path, productsString);
+       
     }
     #validationProduct(newProduct){
         const codeRepeate = this.#products.find(prod => prod.code == newProduct.code)?true:false;
         const allValuesExist = Object.entries(newProduct).every(([key, value]) => key === 'thumbnails' || (!!value && value !== ''));
 
-       
-     
         if(codeRepeate){
             console.log('Error. Repeated Product Code')
         }
@@ -69,7 +55,7 @@ export class ProductManager {
 
         return this.#idIncremental++;  
     }
-    addProduct(
+    async addProduct(
         title,
         description,
         price,
@@ -83,11 +69,10 @@ export class ProductManager {
         if(this.#validationProduct(newProduct)){
             this.#products = [...this.#products, {...newProduct, id: this.#generateID()}]
             const productsString = JSON.stringify(this.#products);
-            fs.writeFileSync(this.path, productsString);
-            return true;
+            await fs.promises.writeFile(this.path, productsString);
         }
         else{
-            return false;
+            throw new Error('Error adding product')
         }
     
     
