@@ -4,7 +4,6 @@ import { Router } from "express";
 import { Cart } from "../carts";
 import * as fs from "fs";
 const cartsRouter = Router();
-let cartsArray = [];
 const cartsPath = '../../carts.json'
 
 cartsRouter.get('/', async (req,res)=>{
@@ -13,30 +12,40 @@ cartsRouter.get('/', async (req,res)=>{
 })
 
 cartsRouter.get('/:pid', async (req,res)=>{
-
+  const id = req.params.pid;
+  try{
+    const cartsString = await fs.promises.readFile(cartsPath, 'utf-8');
+    const carts = JSON.parse(cartsString);
+    const foundCart = carts.find(cart => cart.id == id )
+    
+    if(!foundCart){
+      res.status(404).send({status: "error", data: "Cart not found"});
+      return;
+    }
+    res.status(201).json(foundCart);
+  
+  } catch(error){
+    res.status(400).send({status: "error" , data: "Error retrieving cart" });
+  }
+  
 
 })
 
 cartsRouter.post('/',   async (req, res) => {
-   
-    const newCart = new Cart();
+  const newCart = new Cart();
+  try{
+  
     const cartsString = await fs.promises.readFile(cartsPath, 'utf-8');
-    cartsArray = JSON.parse(cartsString);
-    cartsArray = [...cartsArray, newCart];
-    const newCartString = JSON.stringify(this.#products);
-    await fs.promises.writeFile(this.path, productsString);
+    const cartsArray = [...JSON.parse(cartsString), newCart];
+    const newCartsString = JSON.stringify(cartsArray);
+    await fs.promises.writeFile(cartsPath, newCartsString);
+    res.status(201).json(newCart);
 
 
-
-      
-      if(result){
-        res.status(201).json(newProduct);
-        productsArray.push(newProduct);
+  } catch(error){
+    res.status(400).send({status: "error" , data: "Error creating product" });
+  }
     
-      }
-      else{
-        res.status(400).send({status: "error" , data: "Error adding product" });
-      }
 
 });
 

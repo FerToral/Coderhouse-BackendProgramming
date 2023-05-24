@@ -38,8 +38,8 @@ productsRouter.get('/:pid', async (req,res)=>{
 
 })
 
-productsRouter.post('/',   (req, res) => {
-   
+productsRouter.post('/',  async (req, res) => {
+
       const { title, description, code, price, stock, category, thumbnails } = req.body;
 
       const newProduct = {
@@ -52,17 +52,14 @@ productsRouter.post('/',   (req, res) => {
         category,
         thumbnails: thumbnails || [], 
       };
-
-      const result = productManager.addProduct(newProduct);
-      
-      if(result){
+      try{
+        await productManager.addProduct(newProduct);
         res.status(201).json(newProduct);
-        productsArray.push(newProduct);
-    
+
+      } catch (error){
+        res.status(400).send({status: "error" , data: error.message });
       }
-      else{
-        res.status(400).send({status: "error" , data: "Error adding product" });
-      }
+      
 
 });
 
@@ -72,12 +69,11 @@ productsRouter.put('/:pid',   async (req, res) => {
 
     try {
         await productManager.updateProduct(id, campo);
-
         res.status(200).send({ status: "success", data: "Product updated" });
-      } catch (error) {
-      
+
+    } catch (error) {
         res.status(400).send({ status: "error", data: "Error updating product" });
-      }
+    }
       
 
 });
@@ -88,12 +84,11 @@ productsRouter.delete('/:pid',   async (req, res) => {
 
     try {
         await productManager.deleteProduct(id);
-
         res.status(200).send({ status: "success", data: "Removed Product" });
-      } catch (error) {
-      
+
+    } catch (error) {
         res.status(400).send({ status: "error", data: "Error deleting the product" });
-      }
+    }
       
 
 });
