@@ -6,7 +6,7 @@ import { ProductManager } from "../productManager.js";
 const productsRouter = Router();
 export const productManager = new ProductManager('../products.json');
 
-const productsArray = [];
+
 
 productsRouter.get('/', async (req,res)=>{
     let limit = req.query.limit;

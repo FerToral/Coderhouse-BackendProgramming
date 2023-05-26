@@ -1,9 +1,7 @@
-
-
-import express from 'express'
-
-import productsRouter from './routes/products.router.js';
-import cartsRouter from './routes/carts.router.js';
+//@ts-check
+import express from "express";
+import cartsRouter from "./routes/carts.router.js";
+import productsRouter from "./routes/products.router.js";
 
 const app = express();
 const port = 8080;

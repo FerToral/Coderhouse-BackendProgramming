@@ -4,7 +4,7 @@ import * as fs from "fs";
 
 export class CartManager {
     #carts = [];
-    static idIncremental = 0;
+    #idIncremental = 0;
 
     constructor(path){
         this.path = path;
@@ -12,8 +12,15 @@ export class CartManager {
             fs.writeFileSync(this.path, "[]")
         const cartsString =  fs.readFileSync(this.path,'utf-8');
         this.#carts = cartsString==''?[]:JSON.parse(cartsString);
+        this.calculateIdIncremental();
 
      
+    }
+
+    calculateIdIncremental() {
+        if (this.#carts.length !== 0) {
+            this.#idIncremental = this.#carts.reduce((max, cart) => (cart.id > max ? cart.id : max), 0);
+        }
     }
   
     async getCartById(cartId){
@@ -25,7 +32,7 @@ export class CartManager {
     async createCart(){
 
         const newCart = {
-          id: CartManager.idIncremental++,
+          id: this.#idIncremental++,
           products: []
 
         }
