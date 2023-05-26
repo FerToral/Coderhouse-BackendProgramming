@@ -45,14 +45,14 @@ export class CartManager {
             else{
                 const product = {
                     id: pid,
-                    quantify: 1,
+                    quantity: 1,
                 }
                 cartFound.products.push(product)
             }
             const cartsString = JSON.stringify(this.#carts);
             await fs.promises.writeFile(this.path, cartsString);
         }else{
-            throw Error('Cart not Found')
+            throw new Error('Cart not Found')
         }
        
     }
