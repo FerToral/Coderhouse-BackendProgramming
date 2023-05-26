@@ -4,7 +4,7 @@ import { ProductManager } from "../productManager.js";
 
 
 const productsRouter = Router();
-const productManager = new ProductManager('./products.json');
+export const productManager = new ProductManager('../products.json');
 
 const productsArray = [];
 

@@ -1,29 +1,28 @@
 //@ts-check
 
 import { Router } from "express";
-import { Cart } from "../carts";
-import * as fs from "fs";
+import { CartManager } from "../cartsManager.js";
+import { productManager } from "./products.router.js";
+
 const cartsRouter = Router();
-const cartsPath = '../../carts.json'
+const cartManager = new CartManager('../carritos.json')
 
 cartsRouter.get('/', async (req,res)=>{
    
     
 })
 
-cartsRouter.get('/:pid', async (req,res)=>{
-  const id = req.params.pid;
+cartsRouter.get('/:cid', async (req,res)=>{
+  const cartId = req.params.cid;
   try{
-    const cartsString = await fs.promises.readFile(cartsPath, 'utf-8');
-    const carts = JSON.parse(cartsString);
-    const foundCart = carts.find(cart => cart.id == id )
+    const cartFound = await cartManager.getCartById(cartId);
     
-    if(!foundCart){
+    if(cartFound){
+      res.status(201).json(cartFound.products);
+    }else{
       res.status(404).send({status: "error", data: "Cart not found"});
-      return;
     }
-    res.status(201).json(foundCart);
-  
+   
   } catch(error){
     res.status(400).send({status: "error" , data: "Error retrieving cart" });
   }
@@ -32,20 +31,39 @@ cartsRouter.get('/:pid', async (req,res)=>{
 })
 
 cartsRouter.post('/',   async (req, res) => {
-  const newCart = new Cart();
+
   try{
-  
-    const cartsString = await fs.promises.readFile(cartsPath, 'utf-8');
-    const cartsArray = [...JSON.parse(cartsString), newCart];
-    const newCartsString = JSON.stringify(cartsArray);
-    await fs.promises.writeFile(cartsPath, newCartsString);
-    res.status(201).json(newCart);
+    await cartManager.createCart()
+    res.send({status: "success" , data: `Cart added`})
 
 
   } catch(error){
-    res.status(400).send({status: "error" , data: "Error creating product" });
+    res.status(400).send({status: "error" , data: "Error creating cart" });
   }
     
+
+});
+
+cartsRouter.post('/:cid/products/:pid',   async (req, res) => {
+  const cartId = req.params.cid;
+  const prodId = req.params.pid;
+  const quantity = 1;
+
+  const productFount = await productManager.getProductById(prodId);
+
+  if(productFount){
+    try{
+      await cartManager.addProductToCart(cartId, prodId);
+      res.send({status: "success" , data: `${productFount.name} produt correctly added`})
+
+    }catch(error){
+      res.status(400).send({status: "error" , data: error.message });
+    }
+  }
+  else{
+    res.status(400).send({status: "error" , data: "Product Not Found" });
+  }
+
 
 });
 

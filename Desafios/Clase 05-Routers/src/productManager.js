@@ -24,7 +24,7 @@ export class ProductManager {
         const productsString = await fs.promises.readFile(this.path, 'utf-8');
         this.#products = JSON.parse(productsString);
         const search = this.#products.find(product => product.id == id)
-        return search??'Not Found';
+        return search??false;
     }
     async updateProduct(id, campo){
         this.#products = this.#products.map(p => p.id == id?{...p, ...campo, id: p.id}:p);
