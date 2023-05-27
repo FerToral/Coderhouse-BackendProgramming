@@ -5,8 +5,8 @@
 import * as fs from "fs";
 
 export class ProductManager {
-    #products = [];
-    #idIncremental=0;
+    #products;
+    #idIncremental=-1;
     constructor(filePath){
         this.path = filePath;
         if (!fs.existsSync(this.path))
@@ -18,7 +18,7 @@ export class ProductManager {
     }
     calculateIdIncremental() {
         if (this.#products.length !== 0) {
-            this.#idIncremental = this.#products.reduce((max, prod) => (prod.id > max ? prod.id : max), 0);
+            this.#idIncremental = this.#products.reduce((max, prod) => (parseInt(prod.id) > max ? prod.id : max), this.#idIncremental);
         }
     }
     async getProducts(){
@@ -47,19 +47,20 @@ export class ProductManager {
     #validationProduct(newProduct){
         const codeRepeate = this.#products.find(prod => prod.code == newProduct.code)?true:false;
         const allValuesExist = Object.entries(newProduct).every(([key, value]) => key === 'thumbnails' || (!!value && value !== ''));
-
+        console.log(newProduct)
         if(codeRepeate){
             console.log('Error. Repeated Product Code')
         }
         if(!allValuesExist){
             console.log('Error. Entering empty, null or undefined fields')
+       
         }
 
         return (!codeRepeate && allValuesExist );
     }
     #generateID(){
-
-        return this.#idIncremental++;  
+        return ++this.#idIncremental;  
+        
     }
     async addProduct(
         title,
@@ -73,7 +74,7 @@ export class ProductManager {
     ){
         const newProduct = {title, description, price, thumbnail, code, stock, status, category}
         if(this.#validationProduct(newProduct)){
-            this.#products = [...this.#products, {...newProduct, id: this.#generateID()}]
+            this.#products = [...this.#products, {...newProduct, id: this.#generateID().toString}]
             const productsString = JSON.stringify(this.#products);
             await fs.promises.writeFile(this.path, productsString);
         }

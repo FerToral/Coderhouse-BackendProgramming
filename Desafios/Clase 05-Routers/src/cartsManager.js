@@ -4,7 +4,7 @@ import * as fs from "fs";
 
 export class CartManager {
     #carts = [];
-    #idIncremental = 0;
+    #idIncremental = -1;
 
     constructor(path){
         this.path = path;
@@ -19,7 +19,7 @@ export class CartManager {
 
     calculateIdIncremental() {
         if (this.#carts.length !== 0) {
-            this.#idIncremental = this.#carts.reduce((max, cart) => (cart.id > max ? cart.id : max), 0);
+            this.#idIncremental = this.#carts.reduce((max, cart) => (parseInt(cart.id) > max ? cart.id : max), this.#idIncremental);
         }
     }
   
@@ -32,7 +32,7 @@ export class CartManager {
     async createCart(){
 
         const newCart = {
-          id: this.#idIncremental++,
+          id: ++this.#idIncremental,
           products: []
 
         }

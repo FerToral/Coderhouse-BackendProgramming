@@ -5,16 +5,16 @@ import { CartManager } from "../cartsManager.js";
 import { productManager } from "./products.router.js";
  
 const cartsRouter = Router();
-const cartManager = new CartManager('../carritos.json')
+const cartManager = new CartManager('./carritos.json')
 
 
 cartsRouter.get('/:cid', async (req,res)=>{
-  const cartId = req.params.cid;
+  const cartId = parseInt(req.params.cid);
   try{
     const cartFound = await cartManager.getCartById(cartId);
     
     if(cartFound){
-      res.status(201).json(cartFound.products);
+      res.status(201).send({status: "success", data: cartFound.products});
     }else{
       res.status(404).send({status: "error", data: "Cart not found"});
     }
@@ -49,7 +49,7 @@ cartsRouter.post('/:cid/products/:pid',   async (req, res) => {
   if(productFound){
     try{
       await cartManager.addProductToCart(cartId, prodId);
-      res.status(201).send({status: "success" , data: `${productFound.name} product correctly added`})
+      res.status(201).send({status: "success" , data: `${productFound.title} product correctly added`})
 
     }catch(error){
       res.status(400).send({status: "error" , data: error.message });

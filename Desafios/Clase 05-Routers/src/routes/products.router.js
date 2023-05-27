@@ -4,12 +4,12 @@ import { ProductManager } from "../productManager.js";
 
 
 const productsRouter = Router();
-export const productManager = new ProductManager('../products.json');
+export const productManager = new ProductManager('./productos.json');
 
 
 
 productsRouter.get('/', async (req,res)=>{
-    let limit = req.query.limit;
+    let {limit} = req.query
     const products = await productManager.getProducts();
     
     limit = (!limit)? products.length : limit;
@@ -28,11 +28,11 @@ productsRouter.get('/', async (req,res)=>{
 productsRouter.get('/:pid', async (req,res)=>{
     const id = parseInt(req.params.pid);
     const filteredProduct = await productManager.getProductById(id);
-    if(filteredProduct == 'Not Found'){
-      res.status(404).send({status: "error", data: "Product Not Found"})
+    if(filteredProduct){
+      res.status(200).send({ status: "success", data: filteredProduct})
     }
     else{
-      res.status(200).send({ status: "success", data: filteredProduct})
+      res.status(404).send({status: "error", data: "Product Not Found"})
     }
  
 
@@ -40,20 +40,29 @@ productsRouter.get('/:pid', async (req,res)=>{
 
 productsRouter.post('/',  async (req, res) => {
 
-      const { title, description, code, price, stock, category, thumbnails } = req.body;
+      const { title, description, code, price, stock, category, thumbnails, status } = req.body;
 
       const newProduct = {
         title,
         description,
+        price,
+        thumbnails: thumbnails || [],
         code,
-        price, 
-        status: true, // Status es true por defecto
         stock,
+        status: true, // Status es true por defecto
         category,
-        thumbnails: thumbnails || [], 
       };
       try{
-        await productManager.addProduct(newProduct);
+        await productManager.addProduct(
+          title,
+          description,
+          price,
+          thumbnails,
+          code,
+          stock,
+          status,
+          category
+        );
         res.status(201).json(newProduct);
 
       } catch (error){
@@ -64,16 +73,16 @@ productsRouter.post('/',  async (req, res) => {
 });
 
 productsRouter.put('/:pid',   async (req, res) => {
-   
-    const { id, campo } = req.body;
+      const id = req.params.pid;
+      const {campo } = req.body;
 
-    try {
-        await productManager.updateProduct(id, campo);
-        res.status(200).send({ status: "success", data: "Product updated" });
+      try {
+          await productManager.updateProduct(id, campo);
+          res.status(200).send({ status: "success", data: "Product updated" });
 
-    } catch (error) {
-        res.status(400).send({ status: "error", data: "Error updating product" });
-    }
+      } catch (error) {
+          res.status(400).send({ status: "error", data: "Error updating product" });
+      }
       
 
 });
