@@ -12,15 +12,10 @@ cartsRouter.get('/:cid', async (req,res)=>{
   const cartId = parseInt(req.params.cid);
   try{
     const cartFound = await cartManager.getCartById(cartId);
-    
-    if(cartFound){
-      res.status(201).send({status: "success", data: cartFound.products});
-    }else{
-      res.status(404).send({status: "error", data: "Cart not found"});
-    }
-   
+    res.status(201).json({status: "success", data: cartFound.products});
+      
   } catch(error){
-    res.status(400).send({status: "error" , data: "Error retrieving cart" });
+    res.status(404).json({status: "error", data: "Cart not found"});
   }
   
 
@@ -29,12 +24,12 @@ cartsRouter.get('/:cid', async (req,res)=>{
 cartsRouter.post('/',   async (req, res) => {
 
   try{
-    await cartManager.createCart()
-    res.status(201).send({status: "success" , data: `Cart added`})
+    const newCart = await cartManager.createCart()
+    res.status(201).json({status: "success" , data: `Cart added: ${newCart}`})
 
 
   } catch(error){
-    res.status(400).send({status: "error" , data: "Error creating cart" });
+    res.status(400).json({status: "error" , data: "Error creating cart" });
   }
     
 
@@ -44,20 +39,14 @@ cartsRouter.post('/:cid/products/:pid',   async (req, res) => {
   const cartId = req.params.cid;
   const prodId = req.params.pid;
 
-  const productFound = await productManager.getProductById(prodId);
-
-  if(productFound){
-    try{
-      await cartManager.addProductToCart(cartId, prodId);
-      res.status(201).send({status: "success" , data: `${productFound.title} product correctly added`})
-
-    }catch(error){
-      res.status(400).send({status: "error" , data: error.message });
-    }
+  try{
+    const productFound = await productManager.getProductById(prodId);
+    await cartManager.addProductToCart(cartId, productFound);
+    res.status(201).json({status: "success" , data: `${productFound.title} product correctly added`})
+  }catch(error){
+    res.status(404).json({status: "error" , data: error.message });
   }
-  else{
-    res.status(404).send({status: "error" , data: "Product Not Found" });
-  }
+
 
 
 });

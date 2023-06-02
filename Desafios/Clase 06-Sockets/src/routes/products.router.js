@@ -27,12 +27,12 @@ productsRouter.get('/', async (req,res)=>{
 
 productsRouter.get('/:pid', async (req,res)=>{
     const id = parseInt(req.params.pid);
-    const filteredProduct = await productManager.getProductById(id);
-    if(filteredProduct){
-      res.status(200).send({ status: "success", data: filteredProduct})
-    }
-    else{
-      res.status(404).send({status: "error", data: "Product Not Found"})
+
+    try{
+      const filteredProduct = await productManager.getProductById(id);
+      res.status(200).send({ status: "success", data: filteredProduct});
+    }catch(error){
+      res.status(404).send({status: "error", data: error.message});
     }
  
 

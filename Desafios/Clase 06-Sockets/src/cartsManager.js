@@ -3,31 +3,38 @@
 import * as fs from "fs";
 
 export class CartManager {
-    #carts = [];
+    #carts;
     #idIncremental = -1;
 
     constructor(path){
         this.path = path;
-        if (!fs.existsSync(this.path))
-            fs.writeFileSync(this.path, "[]")
-        const cartsString =  fs.readFileSync(this.path,'utf-8');
-        this.#carts = cartsString==''?[]:JSON.parse(cartsString);
-        this.calculateIdIncremental();
-
+        this.#ensureFileExist();
+        this.#loadCartsFromFile();
+        this.#calculateIdIncremental();
      
     }
-
-    calculateIdIncremental() {
+    #ensureFileExist(){
+        if (!fs.existsSync(this.path))
+            fs.writeFileSync(this.path, "[]");
+    }
+    async #loadCartsFromFile(){
+        const cartsString =  await fs.promises.readFile(this.path,'utf-8');
+        this.#carts = JSON.parse(cartsString);
+    }
+    async #writeCartsToFile(){
+        const cartsString = JSON.stringify(this.#carts);
+        await fs.promises.writeFile(this.path, cartsString);
+    }
+    #calculateIdIncremental() {
         if (this.#carts.length !== 0) {
             this.#idIncremental = this.#carts.reduce((max, cart) => (parseInt(cart.id) > max ? cart.id : max), this.#idIncremental);
         }
     }
   
     async getCartById(cartId){
-        const cartsString = await fs.promises.readFile(this.path, 'utf-8');
-        this.#carts = JSON.parse(cartsString);
+        this.#loadCartsFromFile();
         const search = this.#carts.find(cart => cart.id == cartId)
-        return search??false;
+        return search !== 'undefine'? search: (()=> {throw new Error('Cart not Found')});
     }
     async createCart(){
 
@@ -37,30 +44,29 @@ export class CartManager {
 
         }
         this.#carts = [...this.#carts, newCart];
-        const newCartsString = JSON.stringify( this.#carts);
-        await fs.promises.writeFile(this.path, newCartsString);
+        this.#writeCartsToFile();
+        return newCart;
     }
-    async addProductToCart(cid, pid){
+    async addProductToCart(cid, productFound){
 
-        const cartFound = await this.getCartById(cid);
-
-        if(cartFound){
-            const productFoundInCart = cartFound.products.find(prod => prod.id == pid);
+        try{
+            const cartFound = await this.getCartById(cid);
+            const productFoundInCart = cartFound.products.find(prod => prod.id == productFound.id);
             if(productFoundInCart){
                 productFoundInCart.quantity++;
             }
             else{
                 const product = {
-                    id: pid,
+                    id: productFound.id,
                     quantity: 1,
                 }
                 cartFound.products.push(product)
             }
-            const cartsString = JSON.stringify(this.#carts);
-            await fs.promises.writeFile(this.path, cartsString);
-        }else{
+            this.#writeCartsToFile();
+        }catch(error){
             throw new Error('Cart not Found')
         }
+        
        
     }
   

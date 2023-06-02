@@ -9,39 +9,48 @@ export class ProductManager {
     #idIncremental=-1;
     constructor(filePath){
         this.path = filePath;
-        if (!fs.existsSync(this.path))
-            fs.writeFileSync(this.path, "[]");
-        const productsString =  fs.readFileSync(this.path,'utf-8');
-        this.#products = productsString==''?[]:JSON.parse(productsString);
-        this.calculateIdIncremental();
+        this.#ensureFileExist();
+        this.#loadProductsFromFile();
+        this.#calculateIdIncremental();
      
     }
-    calculateIdIncremental() {
+    #ensureFileExist(){
+        if (!fs.existsSync(this.path))
+            fs.writeFileSync(this.path, "[]");
+    }
+    async #loadProductsFromFile(){
+        const productsString =  await fs.promises.readFile(this.path,'utf-8');
+        this.#products = JSON.parse(productsString);
+    }
+    async #writeProductsToFile(){
+        const productsString = JSON.stringify(this.#products);
+        await fs.promises.writeFile(this.path, productsString);
+    }
+    #calculateIdIncremental() {
         if (this.#products.length !== 0) {
-            this.#idIncremental = this.#products.reduce((max, prod) => (parseInt(prod.id) > max ? prod.id : max), this.#idIncremental);
+            this.#idIncremental = this.#products.reduce((idMax, prod) => (parseInt(prod.id) > idMax ? prod.id : idMax), 0);
         }
     }
+    
     async getProducts(){
-        const productsString = await fs.promises.readFile(this.path, 'utf-8');
-        this.#products = JSON.parse(productsString);
+        this.#loadProductsFromFile();
         return this.#products;
     }
     async getProductById(id){
-        const productsString = await fs.promises.readFile(this.path, 'utf-8');
-        this.#products = JSON.parse(productsString);
+        this.#loadProductsFromFile();
         const search = this.#products.find(product => product.id == id)
-        return search??false;
+        return search !== 'undefine'? search: (()=> {throw new Error('Product not Found')})
+       
     }
     async updateProduct(id, campo){
-        this.#products = this.#products.map(p => p.id == id?{...p, ...campo, id: p.id}:p);
-        const productsString = JSON.stringify(this.#products);
-        await fs.promises.writeFile(this.path, productsString);
+        const { title, description, price, thumbnail, code, stock, category, status } = campo;
+        this._products = this.#products.map(p => p.id == id ? { ...p, title, description, price, thumbnail, code, stock, category, status } : p);
+        this.#writeProductsToFile();
            
     }
     async deleteProduct(id){
         this.#products = this.#products.filter(p => p.id != id)
-        const productsString = JSON.stringify(this.#products);
-        await fs.promises.writeFile(this.path, productsString);
+        this.#writeProductsToFile();
        
     }
     #validationProduct(newProduct){
@@ -49,14 +58,14 @@ export class ProductManager {
         const allValuesExist = Object.entries(newProduct).every(([key, value]) => key === 'thumbnails' || (!!value && value !== ''));
         console.log(newProduct)
         if(codeRepeate){
-            console.log('Error. Repeated Product Code')
+            console.log();
+            throw new Error('Error. Repeated Product Code');
         }
         if(!allValuesExist){
-            console.log('Error. Entering empty, null or undefined fields')
-       
+            throw new Error('Error. Entering empty, null or undefined fields');
         }
 
-        return (!codeRepeate && allValuesExist );
+    
     }
     #generateID(){
         return ++this.#idIncremental;  
@@ -72,16 +81,15 @@ export class ProductManager {
         status,
         category
     ){
-        const newProduct = {title, description, price, thumbnail, code, stock, status, category}
-        if(this.#validationProduct(newProduct)){
+        try{
+            const newProduct = {title, description, price, thumbnail, code, stock, status, category}
+            this.#validationProduct(newProduct);
             this.#products = [...this.#products, {...newProduct, id: this.#generateID().toString}]
-            const productsString = JSON.stringify(this.#products);
-            await fs.promises.writeFile(this.path, productsString);
+            this.#writeProductsToFile();
+        }catch(error){
+            throw new Error(`${error.message}. Error adding product`)
         }
-        else{
-            throw new Error('Error adding product')
-        }
-    
+        
     
     }
 }
