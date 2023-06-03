@@ -58,7 +58,7 @@
                     <li class="list-group-item">Stock: {{stock}}</li>
                     <li class="list-group-item">Category:{{category}}</li>
                     <li class="list-group-item">Thumbnail:<a href="{{thumbnail}}">Product's Image</a></li>
-                    <li> <button type="button" class="btn btn-danger" value={{id}}>Delete</button>
+                    <li> <button type="button" class="btn btn-danger btn-delete" value={{id}}>Delete</button>
                     </li>
                     
                 </ul>
@@ -70,4 +70,5 @@
 </div>
 
 <script src="/socket.io/socket.io.js"></script>
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="/js/index.js"></script>
