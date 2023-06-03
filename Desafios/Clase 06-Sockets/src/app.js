@@ -74,15 +74,7 @@ socketServer.on('conection', socket =>{
     await productManager.deleteProduct(idToDelete);
     socketServer.emit("delete-product-in-table", idToDelete);
   })
-
-  // socket.on('message', data=>{
-  //   console.log(data);
-  // })
-  // socket.emit('evento_para_socket_individual',' This message should only be seen by the socketa ');
-
-  // socket.broadcast.emit('evento_para_todos_menos_el_socket_actual','Es5te evento lo veran todos los sockets conectado, menos el socket actual desde el que se envio el mensaje');
-
-  // socketServer.emit('evento_para_todos', 'Este mensaje lo reciben todos los sockets conectados')
+  
 })
 
 app.get("*", (req, res) => {

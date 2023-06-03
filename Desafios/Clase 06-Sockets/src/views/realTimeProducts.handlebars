@@ -41,13 +41,14 @@
                     </div>
                 </div>
                 
-                <button type="submit" class="btn btn-primary" id="btn-form">Create Product</button>
+                <button type="submit" class="btn btn-primary" id="btn-form" placeholder="Create Product">Create Product</button>
             </form>
         </div>
     </div>
     <div class="col-6">
-         <div class="container">
-            <h2>Lista de Productos con Handlebars y Sockets</h1>
+        <h2>Lista de Productos con Handlebars y Sockets</h1>
+        <div class="container" id="container-list-products">
+          
             {{#each products}}
                 <ul class="list-group mb-2">
                     <li class="list-group-item">Title: {{title}}</li>
@@ -57,7 +58,7 @@
                     <li class="list-group-item">Stock: {{stock}}</li>
                     <li class="list-group-item">Category:{{category}}</li>
                     <li class="list-group-item">Thumbnail:<a href="{{thumbnail}}">Product's Image</a></li>
-                    <li> <button type="submit" class="btn btn-primary">Delete</button>
+                    <li> <button type="button" class="btn btn-danger" value={{id}}>Delete</button>
                     </li>
                     
                 </ul>
@@ -68,3 +69,5 @@
     </div>
 </div>
 
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/index.js"></script>
