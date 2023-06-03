@@ -5,7 +5,7 @@
 import * as fs from "fs";
 
 export class ProductManager {
-    #products;
+    #products=[];
     #idIncremental=-1;
     constructor(filePath){
         this.path = filePath;
@@ -27,9 +27,7 @@ export class ProductManager {
         await fs.promises.writeFile(this.path, productsString);
     }
     #calculateIdIncremental() {
-        if (this.#products.length !== 0) {
-            this.#idIncremental = this.#products.reduce((idMax, prod) => (parseInt(prod.id) > idMax ? prod.id : idMax), 0);
-        }
+        this.#idIncremental = this.#products.reduce((idMax, prod) => (parseInt(prod.id) > idMax ? prod.id : idMax), 0);
     }
     
     async getProducts(){

@@ -3,7 +3,7 @@
 import * as fs from "fs";
 
 export class CartManager {
-    #carts;
+    #carts=[];
     #idIncremental = -1;
 
     constructor(path){
@@ -64,7 +64,7 @@ export class CartManager {
             }
             this.#writeCartsToFile();
         }catch(error){
-            throw new Error('Cart not Found')
+            throw error;
         }
         
        

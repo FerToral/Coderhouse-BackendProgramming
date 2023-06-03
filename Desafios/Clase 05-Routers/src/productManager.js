@@ -17,9 +17,9 @@ export class ProductManager {
      
     }
     calculateIdIncremental() {
-        if (this.#products.length !== 0) {
-            this.#idIncremental = this.#products.reduce((max, prod) => (parseInt(prod.id) > max ? prod.id : max), this.#idIncremental);
-        }
+    
+        this.#idIncremental = this.#products.reduce((idMax, prod) => (parseInt(prod.id) > idMax ? prod.id : idMax), 0);
+    
     }
     async getProducts(){
         const productsString = await fs.promises.readFile(this.path, 'utf-8');
