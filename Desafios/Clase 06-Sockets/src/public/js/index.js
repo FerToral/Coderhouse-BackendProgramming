@@ -30,7 +30,7 @@ formProducts.addEventListener("submit", (event) => {
 
 socket.on("products", (products) =>{
     const lastProduct = products[products.length - 1];
-    const container = document.getElementById("container-list-products");
+    const container = document.getElementById("list-products");
     const data = createList(lastProduct);
     container.append(data);
     btnsDelete = document.querySelectorAll(".btn-delete");
@@ -53,16 +53,18 @@ function createList(product) {
     const data = document.createElement("ul");
     data.classList.add('list-group','mb-2');
     data.innerHTML = `
-
-    <li class="list-group-item">Title: ${product.title}</li>
-    <li class="list-group-item">Description: ${product.description}</li>
-    <li class="list-group-item">Price: ${product.price}</li>
-    <li class="list-group-item">Code: ${product.code}</li>
-    <li class="list-group-item">Stock: ${product.stock}</li>
-    <li class="list-group-item">Category:${product.category}</li>
-    <li class="list-group-item">Thumbnail:<a href="${product.thumbnail}">Product's Image</a></li>
-    <li><button type="button" class="btn btn-danger btn-delete" value=${product.id}>Delete</button>
-    </li>
+    <tr>
+      <th scope="row">{{id}}</th>
+      <td>${product.title}</td>
+      <td>${product.description}</td>
+      <td>${product.price}</td>
+      <td>${product.code}</td>
+      <td>${product.stock}</td>
+      <td>${product.category}</td>
+      <td><a href="${product.thumbnail}">Product's Image</a></td>
+      <td> <button type="button" class="btn btn-danger btn-delete" value=${product.id}>Delete</button>
+      </td>
+    </tr>
     `;
     return data;
   } 

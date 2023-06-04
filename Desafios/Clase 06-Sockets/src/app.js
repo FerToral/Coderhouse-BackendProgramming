@@ -52,7 +52,8 @@ socketServer.on('connection', (socket) =>{
   socket.on("new-product-created", async (newProduct) => {
     try{
       const {title, description, price, thumbnail, code, stock, category} = newProduct;
-
+      const status = true;
+      
       await productManager.addProduct(
         title,
         description,
