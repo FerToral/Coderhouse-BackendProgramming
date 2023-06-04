@@ -10,7 +10,7 @@ export class CartManager {
         this.path = path;
         this.#ensureFileExist();
         this.#loadCartsFromFile();
-        this.#calculateIdIncremental();
+        this.#loadCartsFromFile().then(()=>this.#calculateIdIncremental());
      
     }
     #ensureFileExist(){
@@ -26,9 +26,8 @@ export class CartManager {
         await fs.promises.writeFile(this.path, cartsString);
     }
     #calculateIdIncremental() {
-        if (this.#carts.length !== 0) {
-            this.#idIncremental = this.#carts.reduce((max, cart) => (parseInt(cart.id) > max ? cart.id : max), this.#idIncremental);
-        }
+        this.#idIncremental = this.#carts.reduce((max, cart) => (parseInt(cart.id) > max ? cart.id : max), this.#idIncremental);
+        
     }
   
     async getCartById(cartId){

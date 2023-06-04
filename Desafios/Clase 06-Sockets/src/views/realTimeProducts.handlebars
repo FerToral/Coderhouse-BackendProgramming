@@ -1,14 +1,10 @@
 
 <div class="container mt-4">
-    <div class="row titles-row">
-        <div class="col-8"><h2>Lista de Productos con Handlebars y Sockets</h2></div>
-       
-    
-    </div>
     <div class="row">
-        <div class="col-md-8 col-sm-12">
-           
-            <table class="table table-light table-style" id="list-products">
+        <div class="col-md-12 col-lg-8 table-style p-4">
+             
+            <legend>Lista de Productos con Handlebars y Sockets</legend>
+            <table class="table table-light" id="list-products">
                     <thead class="fs-5">
                         <tr>
                         <th scope="col">#</th>
@@ -21,7 +17,7 @@
                         <th scope="col">Thumbnail</th>
                         </tr>
                     </thead>
-                    <tbody id="container-list-products">
+                    <tbody id="list-products">
                         {{#each products}}
                         <tr>
                             <th scope="row">{{id}}</th>

@@ -30,9 +30,7 @@ formProducts.addEventListener("submit", (event) => {
 
 socket.on("products", (products) =>{
     const lastProduct = products[products.length - 1];
-    const container = document.getElementById("list-products");
-    const data = createList(lastProduct);
-    container.append(data);
+    createRow(lastProduct);
     btnsDelete = document.querySelectorAll(".btn-delete");
     setDelete(btnsDelete)
 })
@@ -49,25 +47,23 @@ socket.on("error", function(errorMessage) {
 });
   
 
-function createList(product) {
-    const data = document.createElement("ul");
-    data.classList.add('list-group','mb-2');
-    data.innerHTML = `
-    <tr>
-      <th scope="row">{{id}}</th>
-      <td>${product.title}</td>
-      <td>${product.description}</td>
-      <td>${product.price}</td>
-      <td>${product.code}</td>
-      <td>${product.stock}</td>
-      <td>${product.category}</td>
-      <td><a href="${product.thumbnail}">Product's Image</a></td>
-      <td> <button type="button" class="btn btn-danger btn-delete" value=${product.id}>Delete</button>
-      </td>
-    </tr>
-    `;
-    return data;
-  } 
+function createRow(product) {
+  const container = document.getElementById("list-products");
+  const newRow = document.createElement("tr");
+  newRow.innerHTML = `
+    <th scope="row">${product.id}</th>
+    <td>${product.title}</td>
+    <td>${product.description}</td>
+    <td>${product.price}</td>
+    <td>${product.code}</td>
+    <td>${product.stock}</td>
+    <td>${product.category}</td>
+    <td><a href="${product.thumbnail}">Product's Image</a></td>
+    <td> <button type="button" class="btn btn-danger btn-delete" value=${product.id}>Delete</button>
+    </td>`;
+  container.appendChild(newRow); // Agregar la nueva fila al contenedor
+
+} 
 function setDelete(btnDelete) {
     for (let btn of btnDelete) {
       btn.addEventListener("click", () => {

@@ -10,8 +10,8 @@ export class ProductManager {
     constructor(filePath){
         this.path = filePath;
         this.#ensureFileExist();
-        this.#loadProductsFromFile();
-        this.#calculateIdIncremental();
+        this.#loadProductsFromFile().then(()=>this.#calculateIdIncremental());
+        
      
     }
     #ensureFileExist(){
@@ -19,8 +19,10 @@ export class ProductManager {
             fs.writeFileSync(this.path, "[]");
     }
     async #loadProductsFromFile(){
+       
         const productsString =  await fs.promises.readFile(this.path,'utf-8');
         this.#products = JSON.parse(productsString);
+      
     }
     async #writeProductsToFile(){
         const productsString = JSON.stringify(this.#products);
@@ -28,6 +30,7 @@ export class ProductManager {
     }
     #calculateIdIncremental() {
         this.#idIncremental = this.#products.reduce((idMax, prod) => (parseInt(prod.id) > idMax ? prod.id : idMax), 0);
+        
     }
     
     async getProducts(){
@@ -66,7 +69,9 @@ export class ProductManager {
     
     }
     #generateID(){
-        return ++this.#idIncremental;  
+        ++this.#idIncremental
+        const newId = this.#idIncremental.toString()
+        return newId;  
         
     }
     async addProduct(
@@ -82,7 +87,8 @@ export class ProductManager {
         try{
             const newProduct = {title, description, price, thumbnail, code, stock, status, category}
             this.#validationProduct(newProduct);
-            this.#products = [...this.#products, {...newProduct, id: this.#generateID().toString}]
+            this.#products = [...this.#products, {...newProduct, id: this.#generateID()}]
+            console.log(this.#products)
             this.#writeProductsToFile();
         }catch(error){
             throw new Error(`${error.message}. Error adding product`)
