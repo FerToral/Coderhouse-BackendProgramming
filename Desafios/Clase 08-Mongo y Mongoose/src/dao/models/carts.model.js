@@ -1,9 +1,8 @@
-import mongoose from "mongoose";
+import {Schema, model} from "mongoose";
 
-const cartsCollection = "carts";
 
-const cartSchema = new mongoose.Schema({
+const cartSchema = new Schema({
   products: { type: Array, required: true },
 });
 
-export const cartsModel = mongoose.model(cartsCollection, cartSchema);
+export const cartsModel = model("carts", cartSchema);

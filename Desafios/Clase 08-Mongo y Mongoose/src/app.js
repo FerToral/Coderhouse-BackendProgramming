@@ -3,7 +3,7 @@ import express from "express";
 import cartsRouter from "./routes/carts.router.js";
 import productsRouter, { productManager } from "./routes/products.router.js";
 import handlebars from 'express-handlebars';
-import {__dirname} from './utils.js';
+import {__dirname, connectMongo} from './utils.js';
 import {Server} from 'socket.io';
 import viewsRouter from "./routes/real-time-products.router.js";
 import mongoose from "mongoose";
@@ -27,16 +27,8 @@ app.set('view engine', 'handlebars');
 /* ARCHIVOS PUBLICOS */
 app.use(express.static(__dirname+'/public'));
 
-
-mongoose.connect('mongodb+srv://fernandojosetoralez:53XqqoJQriX69dpU@backend-cluster.10rbwrs.mongodb.net/?retryWrites=true&w=majority')
-  .then(() => {
-    console.log('Connected to MongoDB');
-    // Resto de tu código aquí
-  })
-  .catch((error) => {
-    console.error('Error connecting to MongoDB:', error);
-  });
-
+/* CONEXION A MONGO */
+connectMongo();
 
 /* ENDPOINTS */
 app.use('/', viewsRouter);
