@@ -2,6 +2,7 @@
 import { Router } from "express";
 import { ProductManager } from "../dao/services/productManager.js";
 import { ProductsModel } from "../dao/models/products.model.js";
+import { productManagerMongo } from "../utils.js";
 
 
 const productsRouter = Router();
@@ -12,7 +13,7 @@ export const productManager = new ProductManager('./productos.json');
 productsRouter.get('/', async (req,res)=>{
     let {limit} = req.query
    
-    const products = await ProductsModel.find({});
+    const products = await productManagerMongo.getProducts();
     
     limit = (!limit)? products.length : limit;
 
@@ -31,11 +32,10 @@ productsRouter.get('/', async (req,res)=>{
 })
 
 productsRouter.get('/:pid', async (req,res)=>{
-    const id = parseInt(req.params.pid);
-
+    const id = req.params.pid;
     try{
       //const filteredProduct = await productManager.getProductById(id);
-      const filteredProduct = await ProductsModel.find({ "id": id })
+      const filteredProduct = await productManagerMongo.getProductById(id);
       res.status(200).json({ 
         status: "success", 
         data: filteredProduct});
@@ -62,6 +62,7 @@ productsRouter.post('/',  async (req, res) => {
         status: true, // Status es true por defecto
         category,
       };
+      console.log(newProduct)
       try{
         await productManager.addProduct(
           title,
@@ -73,22 +74,12 @@ productsRouter.post('/',  async (req, res) => {
           status,
           category
         );
-        await ProductsModel.create({
-          title,
-          description,
-          price,
-          thumbnails: thumbnails || [],
-          code,
-          stock,
-          status,
-          category,
-
-        })
-        res.status(201).send({ status: "success", data: newProduct})
+        await productManagerMongo.addProduct(newProduct)
+        res.status(201).json({ status: "success", data: newProduct})
   
 
       } catch (error){
-        res.status(400).send({status: "error" , data: error.message });
+        res.status(400).json({status: "error" , data: error.message });
       }
       
 
@@ -100,11 +91,11 @@ productsRouter.put('/:pid',   async (req, res) => {
 
       try {
           await productManager.updateProduct(pid, campo);
-          let result = await ProductsModel.updateOne({id:pid},)
-          res.status(200).send({ status: "success", data: "Product updated" });
+          const updatedProduct = await productManagerMongo.updateProduct(pid,campo);
+          res.status(200).json({ status: "success", msg: "Product updated", data: updatedProduct });
 
       } catch (error) {
-          res.status(400).send({ status: "error", data: "Error updating product" });
+          res.status(400).json({ status: "error", data: "Error updating product" });
       }
       
 
@@ -116,10 +107,11 @@ productsRouter.delete('/:pid',   async (req, res) => {
 
     try {
         await productManager.deleteProduct(id);
-        res.status(200).send({ status: "success", data: "Removed Product" });
+        const deletedProduct = await productManagerMongo.deleteProduct(id)
+        res.status(200).json({ status: "success", msg: "Removed Product", data: deletedProduct });
 
     } catch (error) {
-        res.status(400).send({ status: "error", data: "Error deleting the product" });
+        res.status(400).json({ status: "error", data: "Error deleting the product" });
     }
       
 

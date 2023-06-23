@@ -1,6 +1,9 @@
 const socket = io();
 
+
+/* Ingreso de mail en el chat */
 let email = "";
+asyncWraper();
 
 async function asyncWraper() {
   const { value: emailIngresado } = await Swal.fire({
@@ -20,7 +23,7 @@ async function asyncWraper() {
   document.getElementById("span-email").innerHTML = email;
 }
 
-asyncWraper();
+/* Chats */
 
 const chatBox = document.getElementById("input-msg");
 
@@ -38,7 +41,13 @@ socket.on("all_msgs", (msgs) => {
   const divMsgs = document.getElementById("div-msgs");
   let content = "";
   msgs.forEach((msg) => {
-    content = content + `<p>${msg.user} dice: ${msg.message}</p>`;
+    if(msg.user == email){
+      content = content + `<p>Yo: ${msg.message}</p>`;
+    }
+    else{
+      content = content + `<p>${msg.user} dice: ${msg.message}</p>`;
+    }
+    
   });
   divMsgs.innerHTML = content;
   window.scrollTo(0, document.body.scrollHeight);

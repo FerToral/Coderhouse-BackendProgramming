@@ -1,6 +1,6 @@
 //@ts-check
 
-import { ProductsModel } from "../models/products.model";
+import { ProductsModel } from "../models/products.model.js";
 
 export class ProductManagerMongo {
     #products=[];
@@ -13,19 +13,20 @@ export class ProductManagerMongo {
         return this.#products;
     }
     async getProductById(id){
-        const search = await ProductsModel.find({_id:id});
-        return search.length != 0? search: (()=> {throw new Error('Product not Found')})
+        const search = await ProductsModel.findById(id);
+        return search? search: (()=> {throw new Error('Product not Found')})
        
     }
     async updateProduct(id, campo){
-        ProductsModel.updateOne({_id:id}, campo)
+        await ProductsModel.updateOne({_id:id}, campo);
    
     }
     async deleteProduct(id){
-        ProductsModel.deleteOne({_id:id})
+        await ProductsModel.deleteOne({_id:id})
     }
     async #validationProduct(newProduct){
-        const search = await ProductsModel.find({code: newProduct.code});
+        console.log(newProduct)
+        const search = await ProductsModel.find({"code": newProduct.code});
         const codeRepeate = search.length > 0?true:false;
         const allValuesExist = Object.entries(newProduct).every(([key, value]) => key === 'thumbnails' || (!!value && value !== ''));
 
@@ -39,22 +40,12 @@ export class ProductManagerMongo {
 
     
     }
-    async addProduct(
-        title,
-        description,
-        price,
-        thumbnails,
-        code,
-        stock,
-        status,
-        category
-    ){
+    async addProduct(newProduct){
         try{
-            const newProduct = {title, description, price, thumbnails, code, stock, status, category}
-            this.#validationProduct(newProduct);
+            await this.#validationProduct(newProduct);
             await ProductsModel.create(newProduct)
         }catch(error){
-            throw new Error(`${error.message}. Error adding product`)
+            throw new Error(`${error.message}. Error adding product to MongoDB`)
         }
         
     

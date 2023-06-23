@@ -1,8 +1,7 @@
 //@ts-check
-import { CartsModel } from "../models/carts.model";
+import { CartsModel } from "../models/carts.model.js";
 
-export class CartManager {
-    #carts=[];
+export class CartManagerMongo {
 
     constructor(){}
    
@@ -11,37 +10,34 @@ export class CartManager {
         return search.length != 0? search: (()=> {throw new Error('Cart not Found')});
     }
     async createCart(){
-
-        const newCart = {
-          id: ++this.#idIncremental,
-          products: []
-
-        }
-        this.#carts = [...this.#carts, newCart];
-        this.#writeCartsToFile();
+        const newCart = await CartsModel.create({products: []});
         return newCart;
     }
-    async addProductToCart(cid, productFound){
-
-        try{
-            const cartFound = await this.getCartById(cid);
-            const productFoundInCart = cartFound.products.find(prod => prod.id == productFound.id);
-            if(productFoundInCart){
-                productFoundInCart.quantity++;
+    async addProductToCart(cid, pid) {
+        try {
+          const cartFound = await CartsModel.findById(cid);
+          if (cartFound) {
+            const productFoundInCart = cartFound.products.find(prod => prod.pId == pid)?true:false;
+            const idcart = cartFound._id;
+            console.log(cartFound._id)
+            if (idcart) {
+               await CartsModel.updateOne(
+                    { _id: cid, "products.pId": pid },
+                    { $inc: { "products.$.quantity": 1 } }
+               )
+            } else {
+                await CartsModel.updateOne(
+                    { _id: cid},
+                    { $push: { products: { pId: pid, quantity: 1 } }  }
+                )
             }
-            else{
-                const product = {
-                    id: productFound.id,
-                    quantity: 1,
-                }
-                cartFound.products.push(product)
-            }
-            this.#writeCartsToFile();
-        }catch(error){
-            throw error;
+          } else {
+            throw new Error('Cart not Found');
+          }
+        } catch (error) {
+          throw error;
         }
-        
-       
-    }
+      }
+      
   
 }

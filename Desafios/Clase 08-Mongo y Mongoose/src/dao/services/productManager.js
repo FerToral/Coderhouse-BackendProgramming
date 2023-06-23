@@ -44,8 +44,8 @@ export class ProductManager {
        
     }
     async updateProduct(id, campo){
-        const { title, description, price, thumbnail, code, stock, category, status } = campo;
-        this._products = this.#products.map(p => p.id == id ? { ...p, title, description, price, thumbnail, code, stock, category, status } : p);
+        const { title, description, price, thumbnails, code, stock, category, status } = campo;
+        this._products = this.#products.map(p => p.id == id ? { ...p, title, description, price, thumbnails, code, stock, category, status } : p);
         this.#writeProductsToFile();
            
     }
@@ -57,9 +57,7 @@ export class ProductManager {
     #validationProduct(newProduct){
         const codeRepeate = this.#products.find(prod => prod.code == newProduct.code)?true:false;
         const allValuesExist = Object.entries(newProduct).every(([key, value]) => key === 'thumbnails' || (!!value && value !== ''));
-        console.log(newProduct)
         if(codeRepeate){
-            console.log();
             throw new Error('Error. Repeated Product Code');
         }
         if(!allValuesExist){
@@ -78,17 +76,16 @@ export class ProductManager {
         title,
         description,
         price,
-        thumbnail,
+        thumbnails,
         code,
         stock,
         status,
         category
     ){
         try{
-            const newProduct = {title, description, price, thumbnail, code, stock, status, category}
+            const newProduct = {title, description, price, thumbnails, code, stock, status, category}
             this.#validationProduct(newProduct);
             this.#products = [...this.#products, {...newProduct, id: this.#generateID()}]
-            console.log(this.#products)
             this.#writeProductsToFile();
         }catch(error){
             throw new Error(`${error.message}. Error adding product`)

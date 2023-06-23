@@ -25,4 +25,7 @@ viewsRouter.get("/chat", async (req, res) => {
     res.render("chat", {});
 });
 
+viewsRouter.get("/chat", async (req, res) => {
+    res.render("chat", {});
+  });
 export default viewsRouter;

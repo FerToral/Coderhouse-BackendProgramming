@@ -5,9 +5,10 @@ import productsRouter, { productManager } from "./routes/products.router.js";
 import handlebars from 'express-handlebars';
 import {__dirname, connectMongo} from './utils.js';
 import {Server} from 'socket.io';
-import viewsRouter from "./routes/real-time-products.router.js";
+import viewsRouter from "./routes/views.router.js";
 import mongoose from "mongoose";
 import userRouter from "./routes/users.router.js";
+import { MsgModel } from "./dao/models/msgs.model.js";
 
 
 const app = express();
@@ -70,6 +71,12 @@ socketServer.on('connection', (socket) =>{
       socketServer.emit("error", error.message);
     }
     
+  });
+
+  socket.on("msg_front_to_back", async (msg) => {
+    const msgCreated = await MsgModel.create(msg);
+    const msgs = await MsgModel.find({});
+    socketServer.sockets.emit("all_msgs", msgs);
   });
 
   socket.on("delete-product", async (idToDelete) => {
