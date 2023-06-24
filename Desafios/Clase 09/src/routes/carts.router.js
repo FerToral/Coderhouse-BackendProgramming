@@ -15,7 +15,7 @@ cartsRouter.get('/:cid', async (req,res)=>{
   const cartId = parseInt(req.params.cid);
   try{
     //const cartFound = await cartManager.getCartById(cartId);
-    const cartFound = await cartManagerMongo.getCartById(cartId);
+    const cartFound = await cartManagerMongo.getCartByIdPopulate(cartId);
     res.status(201).json({status: "success", data: cartFound});
       
   } catch(error){
