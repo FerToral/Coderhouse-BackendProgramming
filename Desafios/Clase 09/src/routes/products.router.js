@@ -11,7 +11,7 @@ export const productManager = new ProductManager('./productos.json');
 
 
 productsRouter.get('/', async (req,res)=>{
-    let {limit, page, query='', sort=''} = req.query
+    let {limit, page, query, sort=''} = req.query
 
     
     const limitProd = (!limit)? 10 : parseInt(limit);
@@ -24,43 +24,32 @@ productsRouter.get('/', async (req,res)=>{
       res.status(400).send({status: "error", data: "Limit ist not in range"})
     } else {
 
-      const filteredProduct = await ProductsModel.find({query}).sort({"price": sort});
-      const startIndex = (pageProd - 1) * limitProd;
-      const endIndex = pageProd * limitProd;
-      const limitedResults = filteredProduct.slice(startIndex, endIndex);
+      try{
+        const products = await productManagerMongo.paginationProduct(limit, page, query, sort);
 
+        return res.status(200).json({
+          status: 'succesfull',
+          msg: 'Product list',
+          data: {
+            payload: products.docs,
+            totalPages: products.totalPages,
+            prevPage: products.prevPage,
+            nextPage: products.nextPage,
+            page: products.page,
+            hasPrevPage: products.hasPrevPage,
+            hasNextPage: products.hasNextPage,
+            prevLink: products.prevLink,
+            nextLink: products.nextLink,
+          },
+        });
+      }catch(error){
+        return res.status(500).json({ status: 'Error', msg: 'Something went wrong', data: { error } });
+      }
+      
 
-      const totalProducts = filteredProduct.length;
-      const totalPages = Math.ceil(totalProducts / limitProd);
     
-      // Calcular la página anterior y siguiente
-      const prevPage = pageProd > 1 ? pageProd - 1 : null;
-      const nextPage = pageProd <= totalPages ? pageProd + 1 : null;
     
-      // Calcular los indicadores para saber si existen páginas previas y siguientes
-      const hasPrevPage = prevPage !== null;
-      const hasNextPage = nextPage !== null;
-    
-      // Calcular los links directos a la página previa y siguiente
-      const prevLink = hasPrevPage ? `/products?limit=${limit}&page=${prevPage}` : null;
-      const nextLink = hasNextPage ? `/products?limit=${limit}&page=${nextPage}` : null;
-    
-      // Crear el objeto de respuesta con el formato requerido
-      const response = {
-        status: 'success',
-        payload: filteredProduct,
-        totalPages: totalPages,
-        prevPage: prevPage,
-        nextPage: nextPage,
-        page: pageProd,
-        hasPrevPage: hasPrevPage,
-        hasNextPage: hasNextPage,
-        prevLink: prevLink,
-        nextLink: nextLink
-      };
-      return res.status(200).json(response);
-    
-})
+}})
 
 productsRouter.get('/:pid', async (req,res)=>{
     const id = req.params.pid;

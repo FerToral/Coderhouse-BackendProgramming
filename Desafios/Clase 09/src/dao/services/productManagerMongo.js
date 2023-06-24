@@ -7,9 +7,41 @@ export class ProductManagerMongo {
     constructor(){
      
     }
+    async paginationProduct(limit, page, query, sort) {
+        const queryDefined = query ? (typeof query === 'boolean' ? { 'status': query } : { 'category': query }) : {};
+      
+        const options = {
+          limit: limit,
+          page: page,
+          ...queryDefined, // Spread operator to include the defined query in options
+          sort: sort // Optionally include sorting options if needed
+        };
+      
+        const products = await ProductsModel.paginate({}, options);
+      
+        const setLinks = () => {
+          let prevLink = '';
+          let nextLink = '';
+      
+          products.hasNextPage ? (nextLink = `http://localhost:8080/api/products?page=${products.nextPage}`) : (nextLink = null);
+          products.hasPrevPage ? (prevLink = `http://localhost:8080/api/products?page=${products.prevPage}`) : (prevLink = null);
+          products.prevLink = prevLink;
+          products.nextLink = nextLink;
+          return products;
+        };
+        setLinks();
+      
+        return products;
+      }
+      
     
     async getProducts(){
         this.#products = await ProductsModel.find({});
+        return this.#products;
+    }
+    
+    async getProductsdasds(){
+        this.#products = await ProductsModel.paginate
         return this.#products;
     }
     async getProductById(id){
