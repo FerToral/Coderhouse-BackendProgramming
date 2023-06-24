@@ -58,6 +58,59 @@ cartsRouter.post('/:cid/products/:pid',   async (req, res) => {
 
 });
 
+cartsRouter.delete('api/carts/:cid/products/:pid', async (req, res) => {
+  
+  const {cid,pid} = req.params;
 
+  try{
+    const result = cartManagerMongo.deleteProductFromCart(cid,pid)
+    res.status(200).json({status: "error" , data: result })
+  }catch(error){
+    res.status(404).json({status: "error" , data: error.message });
+  }
+  
 
+})
+
+cartsRouter.delete('api/carts/:cid', async (req, res) => {
+  
+  const cid = req.params;
+
+  try{
+    const result = cartManagerMongo.deleteProductsFromCart(cid);
+    res.status(200).json({status: "error" , data: result })
+  }catch(error){
+    res.status(404).json({status: "error" , data: error.message });
+  }
+  
+
+})
+
+cartsRouter.put('api/carts/:cid', async (req,res) => {
+
+  const cid = req.params;
+
+})
+
+cartsRouter.put('api/carts/:cid/products/:pid', async (req,res) => {
+
+  const {cid,pid} = req.params;
+  const {stock} = req.body;
+
+  const stockUpdate = parseInt(stock);
+
+  try{
+    const result = cartManagerMongo.updateStockProductoFromCart(cid,pid,stockUpdate);
+    res.status(200).json({status: "error" , data: result })
+  }catch(error){
+    res.status(404).json({status: "error" , data: error.message });
+  }
+
+  
+  
+})
 export default cartsRouter;
+
+function deleteProductToCart(cid, pid) {
+  throw new Error("Function not implemented.");
+}

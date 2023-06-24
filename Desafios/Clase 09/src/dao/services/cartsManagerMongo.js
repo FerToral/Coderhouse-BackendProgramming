@@ -38,6 +38,28 @@ export class CartManagerMongo {
           throw error;
         }
       }
+    
+    async deleteProductFromCart(cid,pid){
+      await CartsModel.updateOne(
+        { _id: cid },
+        {$pull: {products: {pIp: pid}}}
+
+      )
+    }
+    async updateStockProductoFromCart(cid,pid,stockUpdate){
+      await CartsModel.updateOne(
+        { _id: cid, "products.pId": pid},
+        { $set: { "products.$.quantity": stockUpdate } }
+      )
+    }
+
+    async deleteProductsFromCart(cid){
+      await CartsModel.updateOne(
+        { _id: cid },
+        {$pull: {products: {} }}
+
+      )
+    }
       
   
 }
