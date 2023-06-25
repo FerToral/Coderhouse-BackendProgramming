@@ -65,30 +65,30 @@ function createRow(product) {
 
 } 
 function setDelete(btnDelete) {
-    for (let btn of btnDelete) {
-      btn.addEventListener("click", () => {
-        Swal.fire({
-          title: 'Do you want to delete',
-          text: `you are going to delete the product with the ID: "${btn.value}"`,
-          icon: 'warning',
-          showCancelButton: true,
-          confirmButtonColor: '#3085d6',
-          cancelButtonColor: '#d33',
-          confirmButtonText: 'Yes, delete it!'
-        }).then((result) => {
-          if (result.isConfirmed) {
-            let idToDelete = btn.value
-            socket.emit("delete-product", idToDelete)
-            Swal.fire(
-            'Deleted!',
-            'Your file has been deleted.',
-            'success'
-            )
-          }
-        })
-      });
-    };
-  }
+  for (let btn of btnDelete) {
+    btn.addEventListener("click", () => {
+      Swal.fire({
+        title: 'Do you want to delete',
+        text: `you are going to delete the product with the ID: "${btn.value}"`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          let idToDelete = btn.value
+          socket.emit("delete-product", idToDelete)
+          Swal.fire(
+          'Deleted!',
+          'Your file has been deleted.',
+          'success'
+          )
+        }
+      })
+    });
+  };
+}
 
 socket.on("delete-product-in-table", (idToDelete) => {
     btnsDelete = document.querySelectorAll(".btn-delete");

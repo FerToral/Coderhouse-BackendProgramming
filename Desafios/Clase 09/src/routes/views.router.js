@@ -1,6 +1,7 @@
 //@ts-check
 import express from 'express';
 import { productManager } from "./products.router.js";
+import { cartManagerMongo, productManagerMongo } from '../utils.js';
  
 const viewsRouter = express.Router();
 
@@ -25,7 +26,43 @@ viewsRouter.get("/chat", async (req, res) => {
     res.render("chat", {});
 });
 
-viewsRouter.get("/chat", async (req, res) => {
+viewsRouter.get('/products', async (req, res) => {
+    let { limit, page, sort, query } = req.query;
+
+    const paginationProducts = await productManagerMongo.paginationProduct(limit, page, query, sort);
+    console.log(paginationProducts)
+    const listProducts = paginationProducts.docs.map(product => product.toObject());;
+    return res.render('products', {
+      paginationProducts,
+      listProducts
+   
+    });
+});
+
+viewsRouter.get('/products/:pid', async (req, res) => {
+    const pid = req.params.pid;
+    const productFound = await productManagerMongo.getProductById(pid);
+    const product = productFound.toObject();
+    console.log(product)
+    return res.render('product-id-details', {
+      product
+    });
+  });
+  
+  
+  viewsRouter.get('/carts/:cid', async (req, res) => {
+    const cId = req.params.cid;
+    const cartFound = await cartManagerMongo.getCartByIdPopulate(cId);
+    const cartProducts = cartFound.products;
+    console.log(cartFound)
+  
+    return res.render('cart', {
+        cartProducts,
+   
+    });
+  });
+  
+  viewsRouter.get("/chat", async (req, res) => {
     res.render("chat", {});
   });
 export default viewsRouter;

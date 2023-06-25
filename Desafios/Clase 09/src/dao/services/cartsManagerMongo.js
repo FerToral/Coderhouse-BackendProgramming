@@ -11,38 +11,34 @@ export class CartManagerMongo {
     }
     
     async getCartByIdPopulate(cartId){
-      const search = await CartsModel.find({_id:cartId}).populate('products.product')
-      return search.length != 0? search: (()=> {throw new Error('Cart not Found')});
+      const search = await CartsModel.findById({_id:cartId}).populate('products.product')
+      console.log(search)
+      return search? search: (()=> {throw new Error('Cart not Found')});
     }
     async createCart(){
         const newCart = await CartsModel.create({products: []});
         return newCart;
     }
     async addProductToCart(cid, pid) {
-        try {
-          const cartFound = await CartsModel.findById(cid);
-          if (cartFound) {
-            const productFoundInCart = cartFound.products.find(prod => prod.pId == pid)?true:false;
-            const idcart = cartFound._id;
-            console.log(cartFound._id)
-            if (idcart) {
-               await CartsModel.updateOne(
-                    { _id: cid, "products.pId": pid },
-                    { $inc: { "products.$.quantity": 1 } }
-               )
-            } else {
-                await CartsModel.updateOne(
-                    { _id: cid},
-                    { $push: { products: { pId: pid, quantity: 1 } }  }
-                )
-            }
-          } else {
-            throw new Error('Cart not Found');
-          }
-        } catch (error) {
-          throw error;
+      try {
+        const cart = await CartsModel.findOneAndUpdate(
+          { _id: cid, "products.product": pid },
+          { $inc: { "products.$.quantity": 1 } },
+          { new: true }
+        );
+    
+        if (!cart) {
+          await CartsModel.findOneAndUpdate(
+            { _id: cid },
+            { $push: { products: { product: pid, quantity: 1 } } },
+            { new: true }
+          );
         }
+      } catch (error) {
+        console.error(error);
+        throw new Error('Error adding product to cart');
       }
+    }
     
     async deleteProductFromCart(cid,pid){
       await CartsModel.updateOne(

@@ -1,0 +1,13 @@
+<div class="container">
+    <h2>Lista de Productos del Carrito</h2>
+    {{#each cartProducts}}
+        <ul class="list-group mb-4">
+            <li class="list-group-item">Title: {{_id}}</li>
+            <li class="list-group-item">Price: {{quantity}}</li>
+            <li class="list-group-item">Stock: {{stock}}</li>
+            <li class="list-group-item">Thumbnail:<a href="{{thumbnail}}">Product's Image</a></li>
+        </ul>
+    {{/each}}
+    
+
+</div>

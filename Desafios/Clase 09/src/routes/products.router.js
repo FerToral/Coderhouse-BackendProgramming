@@ -1,7 +1,6 @@
 //@ts-check
 import { Router } from "express";
-import { ProductManager } from "../dao/services/productManager.js";
-import { ProductsModel } from "../dao/models/products.model.js";
+import { ProductManager } from "../controllers/productManager.js";
 import { productManagerMongo } from "../utils.js";
 
 
@@ -13,15 +12,12 @@ export const productManager = new ProductManager('./productos.json');
 productsRouter.get('/', async (req,res)=>{
     let {limit, page, query, sort=''} = req.query
 
-    
     const limitProd = (!limit)? 10 : parseInt(limit);
     const pageProd = (!page)? 1: parseInt(page);
 
 
     if(isNaN(limitProd) || isNaN(pageProd)){
       res.status(400).send({status: "error", data: "Limit must be a Number"})
-    } else if(limitProd < 0 || limitProd > products.length){
-      res.status(400).send({status: "error", data: "Limit ist not in range"})
     } else {
 
       try{
@@ -46,15 +42,11 @@ productsRouter.get('/', async (req,res)=>{
         return res.status(500).json({ status: 'Error', msg: 'Something went wrong', data: { error } });
       }
       
-
-    
-    
 }})
 
 productsRouter.get('/:pid', async (req,res)=>{
     const id = req.params.pid;
     try{
-      //const filteredProduct = await productManager.getProductById(id);
       const filteredProduct = await productManagerMongo.getProductById(id);
       res.status(200).json({ 
         status: "success", 
@@ -70,53 +62,40 @@ productsRouter.get('/:pid', async (req,res)=>{
 
 productsRouter.post('/',  async (req, res) => {
 
-      const { title, description, code, price, stock, category, thumbnails, status } = req.body;
+    const { title, description, code, price, stock, category, thumbnails, status } = req.body;
 
-      const newProduct = {
-        title,
-        description,
-        price,
-        thumbnails: thumbnails || [],
-        code,
-        stock,
-        status: true, // Status es true por defecto
-        category,
-      };
-      console.log(newProduct)
-      try{
-        await productManager.addProduct(
-          title,
-          description,
-          price,
-          thumbnails,
-          code,
-          stock,
-          status,
-          category
-        );
-        await productManagerMongo.addProduct(newProduct)
-        res.status(201).json({ status: "success", data: newProduct})
-  
+    const newProduct = {
+      title,
+      description,
+      price,
+      thumbnails: thumbnails || [],
+      code,
+      stock,
+      status: true, // Status es true por defecto
+      category,
+    };
+    try{
+      await productManagerMongo.addProduct(newProduct)
+      res.status(201).json({ status: "success", data: newProduct})
 
-      } catch (error){
-        res.status(400).json({status: "error" , data: error.message });
-      }
+    } catch (error){
+      res.status(400).json({status: "error" , data: error.message });
+    }
       
 
 });
 
 productsRouter.put('/:pid',   async (req, res) => {
-      const pid = req.params.pid;
-      const {campo } = req.body;
+    const pid = req.params.pid;
+    const {campo } = req.body;
 
-      try {
-          await productManager.updateProduct(pid, campo);
-          const updatedProduct = await productManagerMongo.updateProduct(pid,campo);
-          res.status(200).json({ status: "success", msg: "Product updated", data: updatedProduct });
+    try {
+        const updatedProduct = await productManagerMongo.updateProduct(pid,campo);
+        res.status(200).json({ status: "success", msg: "Product updated", data: updatedProduct });
 
-      } catch (error) {
-          res.status(400).json({ status: "error", data: "Error updating product" });
-      }
+    } catch (error) {
+        res.status(400).json({ status: "error", data: "Error updating product" });
+    }
       
 
 });
@@ -126,7 +105,6 @@ productsRouter.delete('/:pid',   async (req, res) => {
     const id = req.params.pid
 
     try {
-        await productManager.deleteProduct(id);
         const deletedProduct = await productManagerMongo.deleteProduct(id)
         res.status(200).json({ status: "success", msg: "Removed Product", data: deletedProduct });
 
@@ -136,9 +114,5 @@ productsRouter.delete('/:pid',   async (req, res) => {
       
 
 });
-
-
-
-
 
 export default productsRouter;

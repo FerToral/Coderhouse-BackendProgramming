@@ -3,10 +3,9 @@ import express from "express";
 import cartsRouter from "./routes/carts.router.js";
 import productsRouter, { productManager } from "./routes/products.router.js";
 import handlebars from 'express-handlebars';
-import {__dirname, connectMongo} from './utils.js';
+import {__dirname, cartManagerMongo, connectMongo} from './utils.js';
 import {Server} from 'socket.io';
 import viewsRouter from "./routes/views.router.js";
-import mongoose from "mongoose";
 import userRouter from "./routes/users.router.js";
 import { MsgModel } from "./dao/models/msgs.model.js";
 
@@ -82,6 +81,15 @@ socketServer.on('connection', (socket) =>{
   socket.on("delete-product", async (idToDelete) => {
     await productManager.deleteProduct(idToDelete);
     socketServer.emit("delete-product-in-table", idToDelete);
+  })
+
+  socket.on("add-product", async (idToAdd,title) => {
+    //Carrito Default
+    const cid = '649797b077e8959bcadabdea';
+    await cartManagerMongo.addProductToCart(cid,idToAdd);
+    socketServer.emit("notification-add-success", title);
+   
+    
   })
   
 })
