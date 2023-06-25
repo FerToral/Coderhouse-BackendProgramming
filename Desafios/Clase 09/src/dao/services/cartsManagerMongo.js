@@ -6,8 +6,8 @@ export class CartManagerMongo {
     constructor(){}
    
     async getCartById(cartId){
-        const search = await CartsModel.find({_id:cartId})
-        return search.length != 0? search: (()=> {throw new Error('Cart not Found')});
+        const search = await CartsModel.findOne({_id:cartId})
+        return search? search: (()=> {throw new Error('Cart not Found')});
     }
     
     async getCartByIdPopulate(cartId){
@@ -34,7 +34,6 @@ export class CartManagerMongo {
           );
         }
       } catch (error) {
-        console.error(error);
         throw new Error('Error adding product to cart');
       }
     }
@@ -42,24 +41,32 @@ export class CartManagerMongo {
     async deleteProductFromCart(cid,pid){
       await CartsModel.updateOne(
         { _id: cid },
-        {$pull: {products: {pIp: pid}}}
+        {$pull: {products: { product: pid}}}
 
       )
     }
     async updateStockProductoFromCart(cid,pid,stockUpdate){
       await CartsModel.updateOne(
-        { _id: cid, "products.pId": pid},
+        { _id: cid, "products.product": pid},
         { $set: { "products.$.quantity": stockUpdate } }
       )
     }
 
-    async deleteProductsFromCart(cid){
+    async emptyCart(cid){
       await CartsModel.updateOne(
         { _id: cid },
         {$pull: {products: {} }}
 
       )
     }
+
+    async updateProductsFromCart(cid, pUpdate) {
+      await CartsModel.updateOne(
+        { _id: cid },
+        { $set: { products: pUpdate } }
+      );
+    }
+    
       
   
 }

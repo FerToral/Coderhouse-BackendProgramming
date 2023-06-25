@@ -54,7 +54,7 @@ cartsRouter.post('/:cid/products/:pid',   async (req, res) => {
 
 });
 
-cartsRouter.delete('api/carts/:cid/products/:pid', async (req, res) => {
+cartsRouter.delete('/:cid/products/:pid', async (req, res) => {
   
   const {cid,pid} = req.params;
 
@@ -68,12 +68,12 @@ cartsRouter.delete('api/carts/:cid/products/:pid', async (req, res) => {
 
 })
 
-cartsRouter.delete('api/carts/:cid', async (req, res) => {
-  
+cartsRouter.delete('/:cid', async (req, res) => {
+
   const cid = req.params;
 
   try{
-    const result = cartManagerMongo.deleteProductsFromCart(cid);
+    const result = cartManagerMongo.emptyCart(cid);
     res.status(200).json({status: "error" , data: result })
   }catch(error){
     res.status(404).json({status: "error" , data: error.message });
@@ -82,13 +82,16 @@ cartsRouter.delete('api/carts/:cid', async (req, res) => {
 
 })
 
-cartsRouter.put('api/carts/:cid', async (req,res) => {
+cartsRouter.put('/:cid', async (req,res) => {
 
   const cid = req.params;
+  const productUpdate = req.body;
+
+  await cartManagerMongo.updateProductsFromCart(cid, productUpdate);
   //TODO
 })
 
-cartsRouter.put('api/carts/:cid/products/:pid', async (req,res) => {
+cartsRouter.put('/:cid/products/:pid', async (req,res) => {
 
   const {cid,pid} = req.params;
   const {stock} = req.body;
