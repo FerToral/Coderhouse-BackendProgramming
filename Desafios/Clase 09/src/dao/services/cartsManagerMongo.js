@@ -12,7 +12,7 @@ export class CartManagerMongo {
     
     async getCartByIdPopulate(cartId){
       const search = await CartsModel.findById({_id:cartId}).populate('products.product')
-      return search? search: (()=> {throw new Error('Cart not Found')});
+      return search;
     }
     async createCart(){
         const newCart = await CartsModel.create({products: []});
@@ -39,26 +39,34 @@ export class CartManagerMongo {
     }
     
     async deleteProductFromCart(cid,pid){
-      await CartsModel.updateOne(
-        { _id: cid },
-        {$pull: {products: { product: pid}}}
-
+      const result = await CartsModel.findOneAndUpdate(
+        { _id: cid, "products.product": pid },
+        {$pull: {products: { product: pid}}},
       )
+      return result;
     }
     async updateStockProductoFromCart(cid,pid,stockUpdate){
       await CartsModel.updateOne(
         { _id: cid, "products.product": pid},
         { $set: { "products.$.quantity": stockUpdate } }
+        
       )
     }
+    async emptyCart(cid) {
+      try{
+        const cart = await CartsModel.findById(cid);
+        if (!cart) {
+          throw new Error("Carrito no encontrado");
+        }
 
-    async emptyCart(cid){
-      await CartsModel.updateOne(
-        { _id: cid },
-        {$pull: {products: {} }}
-
-      )
+      cart.products = []; // Elimina todos los productos del carrito
+      await cart.save(); // Guarda los cambios en la base de datos
+      }catch(error){
+        throw new Error(error)
+      }
     }
+
+    
 
     async updateProductsFromCart(cid, pUpdate) {
       await CartsModel.updateOne(

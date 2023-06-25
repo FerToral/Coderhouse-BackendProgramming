@@ -1,5 +1,6 @@
 //@ts-check
 
+import e from "express";
 import { ProductsModel } from "../models/products.model.js";
 
 export class ProductManagerMongo {
@@ -39,14 +40,17 @@ export class ProductManagerMongo {
         return this.#products;
     }
     
-    async getProductsdasds(){
-        this.#products = await ProductsModel.paginate
-        return this.#products;
-    }
     async getProductById(id){
-        const search = await ProductsModel.findById(id);
-        return search? search: (()=> {throw new Error('Product not Found')})
+        try{
+            const search = await ProductsModel.findById(id);
+            if(!search)
+                throw new Error('Product not found'); 
+            return search;
        
+        }catch(error){
+            throw error
+        }
+        
     }
     async updateProduct(id, campo){
         await ProductsModel.updateOne({_id:id}, campo);
