@@ -53,7 +53,7 @@ viewsRouter.get('/products/:pid', async (req, res) => {
   viewsRouter.get('/carts/:cid', async (req, res) => {
     const cId = req.params.cid;
     const cartFound = await cartManagerMongo.getCartByIdPopulate(cId);
-    const cartProducts = cartFound.products;
+    const cartProducts = cartFound.products.map(prod => prod.product.toObject());
     console.log(cartFound)
   
     return res.render('cart', {

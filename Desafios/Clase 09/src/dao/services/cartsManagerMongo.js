@@ -12,7 +12,6 @@ export class CartManagerMongo {
     
     async getCartByIdPopulate(cartId){
       const search = await CartsModel.findById({_id:cartId}).populate('products.product')
-      console.log(search)
       return search? search: (()=> {throw new Error('Cart not Found')});
     }
     async createCart(){
