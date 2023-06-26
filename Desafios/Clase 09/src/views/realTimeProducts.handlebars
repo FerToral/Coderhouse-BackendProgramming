@@ -20,15 +20,15 @@
                     <tbody id="list-products">
                         {{#each products}}
                         <tr>
-                            <th scope="row">{{id}}</th>
+                            <th scope="row"> {{@index}}</th>
                             <td>{{title}}</td>
                             <td>{{description}}</td>
                             <td>{{price}}</td>
                             <td>{{code}}</td>
                             <td>{{stock}}</td>
                             <td>{{category}}</td>
-                            <td><a href="{{thumbnail}}">Product's Image</a></td>
-                            <td> <button type="button" class="btn btn-danger btn-delete" value={{id}}>Delete</button>
+                            <td><a href="{{thumbnails}}">Product's Image</a></td>
+                            <td> <button type="button" class="btn btn-danger btn-delete" value={{_id}}>Delete</button>
                             </td>
                         </tr>
                         {{/each}}

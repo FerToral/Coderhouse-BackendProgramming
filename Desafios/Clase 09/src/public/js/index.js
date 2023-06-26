@@ -28,11 +28,12 @@ formProducts.addEventListener("submit", (event) => {
 
 });
 
-socket.on("products", (products) =>{
-    const lastProduct = products[products.length - 1];
-    createRow(lastProduct);
-    btnsDelete = document.querySelectorAll(".btn-delete");
-    setDelete(btnsDelete)
+socket.on("products", (productsList) =>{
+    // const lastProduct = products[products.length - 1];
+    // createRow(lastProduct);
+    // btnsDelete = document.querySelectorAll(".btn-delete");
+    // setDelete(btnsDelete)
+    products = [...productsList];
 })
 
 socket.on("error", function(errorMessage) {

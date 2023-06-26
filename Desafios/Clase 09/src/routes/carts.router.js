@@ -95,7 +95,7 @@ cartsRouter.put('/:cid/products/:pid', async (req,res) => {
 
   try{
     const result = cartManagerMongo.updateStockProductoFromCart(cid,pid,stockUpdate);
-    res.status(200).json({status: "error" , data: result })
+    res.status(200).json({status: "success" , data: result })
   }catch(error){
     res.status(404).json({status: "error" , data: error.message });
   }

@@ -1,13 +1,8 @@
 //@ts-check
 import { Router } from "express";
-import { ProductManager } from "../controllers/productManager.js";
 import { productManagerMongo } from "../utils.js";
 
-
 const productsRouter = Router();
-export const productManager = new ProductManager('./productos.json');
-
-
 
 productsRouter.get('/', async (req,res)=>{
     let {limit, page, query, sort=''} = req.query

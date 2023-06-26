@@ -1,6 +1,5 @@
 //@ts-check
 import express from 'express';
-import { productManager } from "./products.router.js";
 import { cartManagerMongo, productManagerMongo } from '../utils.js';
  
 const viewsRouter = express.Router();
@@ -8,13 +7,17 @@ const viewsRouter = express.Router();
 
 /* VISTA HOME */
 viewsRouter.get("/", async (req, res) => {
-    const products = await productManager.getProducts();
+    const productsMongo = await productManagerMongo.getProducts();
+    const products = productsMongo.map(product => product.toObject());;
+
     res.render("home", {products})
 });
 
 viewsRouter.get("/realtimeproducts", async (req, res) => {
     try{
-        const products = await productManager.getProducts();
+        const productsMongo = await productManagerMongo.getProducts();
+        const products = productsMongo.map(product => product.toObject());;
+
         return res.render('realTimeProducts',{products: products});
         
     }catch(error){

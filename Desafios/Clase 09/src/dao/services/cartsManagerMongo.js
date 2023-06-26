@@ -69,10 +69,11 @@ export class CartManagerMongo {
     
 
     async updateProductsFromCart(cid, pUpdate) {
-      await CartsModel.updateOne(
+      const result = await CartsModel.updateOne(
         { _id: cid },
         { $set: { products: pUpdate } }
       );
+      return result;
     }
     
       

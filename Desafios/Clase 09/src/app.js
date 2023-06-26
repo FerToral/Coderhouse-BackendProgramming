@@ -1,13 +1,13 @@
 //@ts-check
 import express from "express";
 import cartsRouter from "./routes/carts.router.js";
-import productsRouter, { productManager } from "./routes/products.router.js";
 import handlebars from 'express-handlebars';
-import {__dirname, cartManagerMongo, connectMongo} from './utils.js';
+import {__dirname, cartManagerMongo, connectMongo, productManagerMongo} from './utils.js';
 import {Server} from 'socket.io';
 import viewsRouter from "./routes/views.router.js";
 import userRouter from "./routes/users.router.js";
 import { MsgModel } from "./dao/models/msgs.model.js";
+import productsRouter from "./routes/products.router.js";
 
 
 const app = express();
@@ -50,21 +50,23 @@ socketServer.on('connection', (socket) =>{
   socket.on("new-product-created", async (newProduct) => {
     try{
       const {title, description, price, thumbnail, code, stock, category} = newProduct;
-      const status = true;
-      
-      await productManager.addProduct(
+   
+      const newProductCompleted = {
         title,
         description,
         price,
-        thumbnail,
+        thumbnails: thumbnail || [],
         code,
         stock,
-        status,
-        category
-      )
+        status: true, // Status es true por defecto
+        category,
+      };
 
-      const productList = await productManager.getProducts();
-      socketServer.emit("products", productList);
+      await productManagerMongo.addProduct(newProductCompleted)
+
+      const productsMongo = await productManagerMongo.getProducts();
+      const productsList = productsMongo.map(product => product.toObject());;
+      socketServer.emit("products", productsList);
 
     }catch(error){
       socketServer.emit("error", error.message);
