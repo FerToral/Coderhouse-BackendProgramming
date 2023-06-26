@@ -20,7 +20,7 @@ formProducts.addEventListener("submit", (event) => {
         category: categoryInput.value,
         stock: stockInput.value,
         code: codeInput.value,
-        thumbnail: thumbnailInput.value,
+        thumbnails: thumbnailInput.value,
         description: descriptionInput.value,        
     };
 
@@ -28,12 +28,10 @@ formProducts.addEventListener("submit", (event) => {
 
 });
 
-socket.on("products", (productsList) =>{
-    // const lastProduct = products[products.length - 1];
-    // createRow(lastProduct);
-    // btnsDelete = document.querySelectorAll(".btn-delete");
-    // setDelete(btnsDelete)
-    products = [...productsList];
+socket.on("newproduct", (product) =>{
+    createRow(product);
+    btnsDelete = document.querySelectorAll(".btn-delete");
+    setDelete(btnsDelete)
 })
 
 socket.on("error", function(errorMessage) {
@@ -52,7 +50,7 @@ function createRow(product) {
   const container = document.getElementById("list-products");
   const newRow = document.createElement("tr");
   newRow.innerHTML = `
-    <th scope="row">${product.id}</th>
+    <th scope="row">{{@index}}</th>
     <td>${product.title}</td>
     <td>${product.description}</td>
     <td>${product.price}</td>
@@ -60,7 +58,7 @@ function createRow(product) {
     <td>${product.stock}</td>
     <td>${product.category}</td>
     <td><a href="${product.thumbnail}">Product's Image</a></td>
-    <td> <button type="button" class="btn btn-danger btn-delete" value=${product.id}>Delete</button>
+    <td> <button type="button" class="btn btn-danger btn-delete" value=${product._id}>Delete</button>
     </td>`;
   container.appendChild(newRow); // Agregar la nueva fila al contenedor
 

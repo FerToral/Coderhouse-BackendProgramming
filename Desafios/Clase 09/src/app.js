@@ -1,14 +1,14 @@
 //@ts-check
 import express from "express";
-import cartsRouter from "./routes/carts.router.js";
 import handlebars from 'express-handlebars';
 import {__dirname, cartManagerMongo, connectMongo, productManagerMongo} from './utils.js';
 import {Server} from 'socket.io';
-import viewsRouter from "./routes/views.router.js";
-import userRouter from "./routes/users.router.js";
 import { MsgModel } from "./dao/models/msgs.model.js";
 import productsRouter from "./routes/products.router.js";
-
+import viewsRouter from "./routes/views.router.js";
+import userRouter from "./routes/users.router.js";
+import cartsRouter from "./routes/carts.router.js";
+import { ProductsModel } from "./dao/models/products.model.js";
 
 const app = express();
 const port = 8080;
@@ -49,24 +49,19 @@ socketServer.on('connection', (socket) =>{
 
   socket.on("new-product-created", async (newProduct) => {
     try{
-      const {title, description, price, thumbnail, code, stock, category} = newProduct;
-   
       const newProductCompleted = {
-        title,
-        description,
-        price,
-        thumbnails: thumbnail || [],
-        code,
-        stock,
-        status: true, // Status es true por defecto
-        category,
+        ...newProduct,
+        thumbnails: newProduct.thumbnail || [],
+        status: true,
       };
+      
 
       await productManagerMongo.addProduct(newProductCompleted)
-
-      const productsMongo = await productManagerMongo.getProducts();
-      const productsList = productsMongo.map(product => product.toObject());;
-      socketServer.emit("products", productsList);
+      //Busco el último
+      const latestProduct = await ProductsModel.findOne({}, {sort: {_id: -1}});
+      const newProductObject = latestProduct.toObject();
+      console.log(newProductObject)
+      socketServer.emit("newproduct", newProduct);
 
     }catch(error){
       socketServer.emit("error", error.message);
@@ -81,7 +76,7 @@ socketServer.on('connection', (socket) =>{
   });
 
   socket.on("delete-product", async (idToDelete) => {
-    await productManager.deleteProduct(idToDelete);
+    await productManagerMongo.deleteProduct(idToDelete);
     socketServer.emit("delete-product-in-table", idToDelete);
   })
 

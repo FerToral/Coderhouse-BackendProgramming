@@ -2,8 +2,8 @@
 import { fileURLToPath } from "url";
 import {dirname} from "path";
 import multer from 'multer';
-import { CartManagerMongo } from "./dao/services/cartsManagerMongo.js";
-import { ProductManagerMongo } from "./dao/services/productManagerMongo.js";
+import { CartManagerMongo } from "./services/cartsManagerMongo.js";
+import { ProductManagerMongo } from "./services/productManagerMongo.js";
 
 const storage = multer.diskStorage({
     destination: function(req,file,cb){
