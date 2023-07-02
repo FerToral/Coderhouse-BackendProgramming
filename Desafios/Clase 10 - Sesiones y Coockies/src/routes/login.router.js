@@ -3,6 +3,14 @@ import { UserModel } from '../dao/models/users.model.js';
 
 export const loginRouter = express.Router();
 
+const admin = {
+  email: 'adminCoder@coder.com',
+  password: 'adminCod3r123',
+  admin: true,
+  firstName: 'Admin',
+  lastName: 'Coderhouse'
+}
+
 loginRouter.post('/register', async (req, res) => {
   const { firstName, lastName, age, email, password } = req.body;
   if (!firstName || !lastName || !age || !email || !password) {
@@ -27,14 +35,31 @@ loginRouter.post('/login', async (req, res) => {
   }
   try {
     const foundUser = await UserModel.findOne({ email });
-    if (foundUser && foundUser.password === password) {
-      req.session.firstName = foundUser.firstName;
-      req.session.email = foundUser.email;
-      req.session.admin = foundUser.admin;
-      return res.redirect('/profile');
-    } else {
-      return res.status(400).render('error-page', { msg: 'email o pass incorrectos' });
+    const limit = 10; 
+    const page = 1; 
+    const sort = 1;
+    const query = 'true';
+
+    if(foundUser){
+      if(foundUser.password === password){
+        req.session.firstName = foundUser.firstName;
+        req.session.email = foundUser.email;
+        req.session.admin = foundUser.admin;
+      
+        const queryParameters = `?limit=${limit}&page=${page}&sort=${sort}&query=${query}`;
+        return res.redirect('/products' + queryParameters);
+      }
+    }else{
+      if(email == admin.email && password == admin.password){
+        req.session.firstName = admin.firstName;
+        req.session.email = admin.email;
+        req.session.admin = admin.admin;
+        const queryParameters = `?limit=${limit}&page=${page}&sort=${sort}&query=${query}`;
+        return res.redirect('/products' + queryParameters);
+      }
     }
+    return res.status(400).render('error-page', { msg: 'email o pass incorrectos' });
+ 
   } catch (e) {
     console.log(e);
     return res.status(500).render('error-page', { msg: 'error inesperado en servidor' });

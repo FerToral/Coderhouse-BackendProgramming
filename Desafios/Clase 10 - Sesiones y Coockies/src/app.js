@@ -51,7 +51,7 @@ app.use('/', viewsRouter);
 app.use('/api/products/', productsRouter);
 app.use('/api/carts/', cartsRouter);
 app.use('/api/users',usersRouter);
-app.use('/api/sessions', loginRouter);
+app.use('/api/sessions/', loginRouter);
 app.use('/users', usersHtmlRouter);
 
 app.get("*", (req, res) => {

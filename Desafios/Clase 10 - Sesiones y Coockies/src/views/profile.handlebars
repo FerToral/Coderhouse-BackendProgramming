@@ -1,0 +1,15 @@
+<h1>Bievenido, {{firstName}}</h1>
+<di>
+    <h2>Datos del usuario</h2>
+    <div class="data-profile">
+        <ul>
+            <li>Email: {{email}}</li>
+            {{#if admin}}
+                <li>Role: admin</li>
+            {{else}}
+                <li>Role: user</li>
+            {{/if}}
+        </ul>
+    </div>
+</di>
+<a href='/logout'>LOGOUT</a>

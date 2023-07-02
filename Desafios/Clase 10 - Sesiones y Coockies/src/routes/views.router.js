@@ -7,19 +7,34 @@ const viewsRouter = express.Router();
 
 
 /* VISTA HOME */
-viewsRouter.get("/", async (req, res) => {
+viewsRouter.get("/", checkUser, async (req, res) => {
+    const firstName = req.session.firstName;
+    const email = req.session.email;
+    const admin = req.session.admin;
     const productsMongo = await productManagerMongo.getProducts();
     const products = productsMongo.map(product => product.toObject());;
-
-    res.render("home", {products})
+    res.render("home", {
+      products,
+      firstName,
+      email,
+      admin
+    })
 });
 
-viewsRouter.get("/realtimeproducts", async (req, res) => {
+viewsRouter.get("/realtimeproducts", checkUser, async (req, res) => {
+    const firstName = req.session.firstName;
+    const email = req.session.email;
+    const admin = req.session.admin;
     try{
         const productsMongo = await productManagerMongo.getProducts();
         const products = productsMongo.map(product => product.toObject());;
 
-        return res.render('realTimeProducts',{products: products});
+        return res.render('realTimeProducts',{
+          products: products,
+          firstName,
+          email,
+          admin
+        });
         
     }catch(error){
         res.status(500).json({ success: "false", msg: "Error"});
@@ -30,16 +45,22 @@ viewsRouter.get("/chat", async (req, res) => {
     res.render("chat", {});
 });
 
-viewsRouter.get('/products', async (req, res) => {
-    let { limit, page, sort, query } = req.query;
+viewsRouter.get('/products', checkUser, async (req, res) => {
+    let { limit, page, sort, query} = req.query;
+    const firstName = req.session.firstName;
+    const email = req.session.email;
+    const admin = req.session.admin;
 
     const paginationProducts = await productManagerMongo.paginationProduct(limit, page, query, sort);
     console.log(paginationProducts)
     const listProducts = paginationProducts.docs.map(product => product.toObject());;
     return res.render('products', {
       paginationProducts,
-      listProducts
-   
+      listProducts,
+      firstName,
+      email,
+      admin
+      
     });
 });
 
@@ -73,7 +94,7 @@ viewsRouter.get('/products/:pid', async (req, res) => {
     res.render("chat", {});
   });
 
-  viewsRouter.get('/logout', (req, res) => {
+viewsRouter.get('/logout', (req, res) => {
     req.session.destroy((err) => {
       if (err) {
         return res.render('error-page', { msg: 'no se pudo cerrar la session' });
@@ -91,7 +112,14 @@ viewsRouter.get('/products/:pid', async (req, res) => {
   });
   
   viewsRouter.get('/profile', checkUser, (req, res) => {
-    res.render('profile');
+    const firstName = req.session.firstName;
+    const email = req.session.email;
+    const admin = req.session.admin;
+    res.render('profile', {
+      firstName,
+      email,
+      admin
+    });
   });
   
   viewsRouter.get('/solo-para-admin', checkAdmin, (req, res) => {
