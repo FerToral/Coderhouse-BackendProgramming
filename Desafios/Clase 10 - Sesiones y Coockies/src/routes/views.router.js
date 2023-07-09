@@ -1,30 +1,29 @@
 //@ts-check
 import express from 'express';
-import { checkAdmin, checkUser } from '../middlewares/auth.js';
+import { checkAdmin, checkUser, getSession } from '../middlewares/auth.js';
 import { cartManagerMongo, productManagerMongo } from '../utils.js';
+import { paginationMiddlewareViews } from '../middlewares/mw-routerviews.js'; 
  
 const viewsRouter = express.Router();
 
 
 /* VISTA HOME */
-viewsRouter.get("/", checkUser, async (req, res) => {
-    const firstName = req.session.firstName;
-    const email = req.session.email;
-    const admin = req.session.admin;
-    const productsMongo = await productManagerMongo.getProducts();
-    const products = productsMongo.map(product => product.toObject());;
-    res.render("home", {
-      products,
-      firstName,
-      email,
-      admin
-    })
+viewsRouter.get("/", checkUser, getSession, async (req, res) => {
+  const { firstName, email, admin} = req.sessionData;
+  const productsMongo = await productManagerMongo.getProducts();
+  const products = productsMongo.map(product => product.toObject());;
+
+  res.render("home", {
+    products,
+    firstName,
+    email,
+    admin
+  })
+
 });
 
-viewsRouter.get("/realtimeproducts", checkUser, async (req, res) => {
-    const firstName = req.session.firstName;
-    const email = req.session.email;
-    const admin = req.session.admin;
+viewsRouter.get("/realtimeproducts", checkUser, getSession, async (req, res) => {
+  const { firstName, email, admin} = req.sessionData;
     try{
         const productsMongo = await productManagerMongo.getProducts();
         const products = productsMongo.map(product => product.toObject());;
@@ -45,14 +44,11 @@ viewsRouter.get("/chat", async (req, res) => {
     res.render("chat", {});
 });
 
-viewsRouter.get('/products', checkUser, async (req, res) => {
-    let { limit, page, sort, query} = req.query;
-    const firstName = req.session.firstName;
-    const email = req.session.email;
-    const admin = req.session.admin;
-
+viewsRouter.get('/products', checkUser, paginationMiddlewareViews,  getSession , async (req, res) => {
+    const { limit, page, sort, query} = req.paginationOptions;
+    const { firstName, email, admin} = req.sessionData;
+    
     const paginationProducts = await productManagerMongo.paginationProduct(limit, page, query, sort);
-    console.log(paginationProducts)
     const listProducts = paginationProducts.docs.map(product => product.toObject());;
     return res.render('products', {
       paginationProducts,
@@ -68,7 +64,7 @@ viewsRouter.get('/products/:pid', async (req, res) => {
     const pid = req.params.pid;
     const productFound = await productManagerMongo.getProductById(pid);
     const product = productFound.toObject();
-    console.log(product)
+  
     return res.render('product-id-details', {
       product
     });
@@ -111,10 +107,8 @@ viewsRouter.get('/logout', (req, res) => {
     res.render('register-form');
   });
   
-  viewsRouter.get('/profile', checkUser, (req, res) => {
-    const firstName = req.session.firstName;
-    const email = req.session.email;
-    const admin = req.session.admin;
+  viewsRouter.get('/profile', checkUser, getSession, (req, res) => {
+    const { firstName, email, admin} = req.sessionData;
     res.render('profile', {
       firstName,
       email,

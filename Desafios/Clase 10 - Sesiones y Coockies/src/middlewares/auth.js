@@ -12,3 +12,16 @@ export function checkAdmin(req, res, next) {
   }
   return res.status(401).render('error-page', { msg: 'please log in AS ADMIN!' });
 }
+
+
+export function getSession(req, res, next){
+  const firstName = req.session.firstName;
+  const email = req.session.email;
+  const admin = req.session.admin;
+  req.sessionData = {
+    firstName,
+    email,
+    admin
+  }
+  return next();
+}
