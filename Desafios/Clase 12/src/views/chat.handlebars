@@ -1,0 +1,30 @@
+
+
+
+<div class="container container-msgs d-flex flex-column">
+  <div class="row welcome-title">
+    <div class="col">
+      <h2 class="m-4">Bienvenid@ <span id="span-email"></span></h2>
+    </div>
+  </div>
+  <div class="row flex-fill h-100">
+    <div class="col-4 component-group-chats">
+      <ul class="list-group ">
+        <li class="list-group-item">Grupo Backend-Coders</li>
+        <li class="list-group-item">Grupo de Chats 2</li>
+        <li class="list-group-item">Grupo de Chats 3</li>
+      </ul>
+    </div>
+    <div class="col-8 component-msgs h-100">
+      <div id="div-msgs" class="msgs-scroll p-2 mh-100">
+        <div class="loader"></div>
+      </div>
+      <input id="input-msg" type="text" value="" placeholder="Mensaje..." />
+    </div>
+  </div>
+</div>
+
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="/js/chat.js"></script>
