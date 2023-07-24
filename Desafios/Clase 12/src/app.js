@@ -1,7 +1,7 @@
 //@ts-check
 import express from "express";
 import handlebars from 'express-handlebars';
-import {__dirname} from './utils.js';
+import {__dirname} from './utils/utils.js';
 import { connectSocket } from "./utils/connect-socket.js";
 import { connectMongo } from "./utils/connect-db.js";
 import productsRouter from "./routes/products.router.js";

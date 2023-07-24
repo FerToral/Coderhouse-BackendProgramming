@@ -34,7 +34,12 @@ authRouter.post('/login', passport.authenticate('login', { failureRedirect: '/au
   if (!req.user) {
     return res.json({ error: 'invalid credentials' });
   }
-  req.session.user = { _id: req.user._id, email: req.user.email, firstName: req.user.firstName, lastName: req.user.lastName, isAdmin: req.user.isAdmin };
+  req.session.user = { 
+    _id: req.user._id.toString(), 
+    email: req.user.email, 
+    firstName: req.user.firstName, 
+    rol: req.user.rol 
+  };
 
   return res.json({ msg: 'ok', payload: req.user });
 });
