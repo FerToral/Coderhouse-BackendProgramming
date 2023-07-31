@@ -4,18 +4,18 @@ import handlebars from 'express-handlebars';
 import {__dirname} from './utils/utils.js';
 import { connectSocket } from "./utils/connect-socket.js";
 import { connectMongo } from "./utils/connect-db.js";
-import productsRouter from "./routes/products.router.js";
-import viewsRouter from "./routes/views.router.js";
-import {usersRouter} from "./routes/users.router.js";
-import { usersHtmlRouter } from './routes/users.html.router.js';
-import { authRouter } from './routes/auth.router.js';
-import cartsRouter from "./routes/carts.router.js";
+import productsRouter from "./routes/api/products-api.router.js";
+import viewsRouter from "./routes/views/views.router.js";
+import {usersRouter} from "./routes/api/users-api.router.js";
+import { usersHtmlRouter } from './routes/views/users.html.router.js';
+import { authRouter } from './routes/views/auth.router.js';
+import cartsRouter from "./routes/api/carts-api.router.js";
 import MongoStore from 'connect-mongo';
 import cookieParser from "cookie-parser";
 import passport from "passport";
 import { initializePassport } from "./config/passport.config.js";
 import session from 'express-session';
-import { sessionsRouter } from "./routes/sessions.router.js";
+import { sessionsRouter } from "./routes/views/sessions.router.js";
 
 
 
@@ -62,7 +62,7 @@ app.use('/api/sessions/', sessionsRouter);
 app.use('/auth', authRouter)
 app.use('/api/products/', productsRouter);
 app.use('/api/carts/', cartsRouter);
-app.use('/api/users',usersRouter);
+app.use('/api/users/',usersRouter);
 app.use('/users', usersHtmlRouter);
 app.use('/api/sessions/current', (req, res) => {
   return res.status(200).json({

@@ -1,7 +1,7 @@
 //@ts-check
 
 import { Router } from "express";
-import { cartManagerMongo, productManagerMongo } from "../utils.js";
+import { cartManagerMongo, productManagerMongo } from "../../utils/utils.js";
 
  
 const cartsRouter = Router();

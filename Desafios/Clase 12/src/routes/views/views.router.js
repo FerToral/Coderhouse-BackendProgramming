@@ -1,8 +1,8 @@
 //@ts-check
 import express from 'express';
-import { checkAdmin, checkUser, getSession } from '../middlewares/auth.js';
-import { cartManagerMongo, productManagerMongo } from '../utils.js';
-import { paginationMiddlewareViews } from '../middlewares/mw-routerviews.js'; 
+import { checkAdmin, checkUser, getSession } from '../../middlewares/auth.js';
+import { cartManagerMongo, productManagerMongo } from '../../utils/utils.js';
+import { paginationMiddlewareViews } from '../../middlewares/mw-routerviews.js'; 
  
 const viewsRouter = express.Router();
 

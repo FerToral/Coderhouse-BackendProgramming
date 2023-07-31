@@ -1,20 +1,47 @@
 import { UserModel } from '../dao/models/users.model.js';
+import { isValidPassword, createHash } from '../utils/bcrypt.js';
 
 export class UserService {
-  validateUser(firstName, lastName, email) {
-    if (!firstName || !lastName || !email) {
-      console.log('validation error: please complete firstName, lastname and email.');
-      throw new Error('validation error: please complete firstName, lastname and email.');
-    }
-  }
+ 
   async getAll() {
     const users = await UserModel.find({});
     return users;
   }
 
-  async createOne(firstName, lastName, email) {
-    this.validateUser(firstName, lastName, email);
-    const userCreated = await UserModel.create({ firstName, lastName, email });
+  async findUser(email, password) {
+    const user = await UserModel.findOne({ email: email });
+    if (user && isValidPassword(password, user.password)) {
+      return user;
+    } else {
+      return false;
+    }
+  }
+
+  async findUserByEmail(email) {
+    const user = await UserModel.findOne(
+      { email: email },
+      {
+        _id: true,
+        email: true,
+        username: true,
+        password: true,
+        rol: true,
+      }
+    );
+    return user || false;
+  }
+
+  async createOne(userToCreate) {
+    const existingUser = await this.findUserByEmail(userToCreate.email);
+
+    if (existingUser) {
+      throw 'cannot create a user that allready exists';
+    }
+
+    userToCreate.password = createHash(userToCreate.password);
+
+    const userCreated = await UserModel.create(userToCreate);
+
     return userCreated;
   }
 
@@ -23,10 +50,18 @@ export class UserService {
     return deleted;
   }
 
-  async updateOne(_id, firstName, lastName, email) {
-    if (!_id) throw new Error('invalid _id');
-    this.validateUser(firstName, lastName, email);
-    const userUptaded = await UserModel.updateOne({ _id: id }, { firstName, lastName, email });
+  async updateOne({ _id, email, username, password, rol }) {
+    const userUptaded = await UserModel.updateOne(
+      {
+        _id: _id,
+      },
+      {
+        email,
+        username,
+        password,
+        rol,
+      }
+    );
     return userUptaded;
   }
 }

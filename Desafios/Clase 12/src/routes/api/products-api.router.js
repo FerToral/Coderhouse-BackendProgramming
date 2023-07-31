@@ -1,7 +1,7 @@
 //@ts-check
 import { Router } from "express";
-import { productManagerMongo } from "../utils.js";
-import {paginationMiddleware, validateProductMiddleware, validationProduct} from "../middlewares/mw-routerproducts.js"
+import { productManagerMongo } from "../../utils/utils.js";
+import {paginationMiddleware, validateProductMiddleware, validationProduct} from "../../middlewares/mw-routerproducts.js"
 
 const productsRouter = Router();
 
