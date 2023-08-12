@@ -1,18 +1,18 @@
 
 
-class UsersController{
+class UserController{
     getPagination(req, res){
         const { page /* , limit, query, sort */ } = req.query;
-  console.log(page);
-  //TODO
-  const users = await UserModel.paginate({}, { limit: /*  limit || */ 10, page: page || 1 });
-  let usuarios = users.docs.map((user) => {
-    return {
-      id: user._id.toString(),
-      firstName: user.firstName,
-      lastName: user.lastName,
-      email: user.email,
-    };
+        console.log(page);
+        //TODO
+        const users = await UserModel.paginate({}, { limit: /*  limit || */ 10, page: page || 1 });
+        let usuarios = users.docs.map((user) => {
+          return {
+            id: user._id.toString(),
+            firstName: user.firstName,
+            lastName: user.lastName,
+            email: user.email,
+          };
   });
 
   return res.status(200).render('usuarios', {
@@ -32,4 +32,4 @@ class UsersController{
     }
 }
 
-export const usersController = new UsersController();
+export const userController = new UsersController();

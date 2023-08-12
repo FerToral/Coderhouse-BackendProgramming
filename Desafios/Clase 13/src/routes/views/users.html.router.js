@@ -1,7 +1,9 @@
 import express from 'express';
 import { UserModel } from '../../dao/models/users.model.js';
+import { userController } from '../../controllers/users.controller.js';
 
 export const usersHtmlRouter = express.Router();
+
 usersHtmlRouter.get('/', async (req, res) => {
   const { page /* , limit, query, sort */ } = req.query;
   console.log(page);
@@ -45,3 +47,6 @@ usersHtmlRouter.get('/', async (req, res) => {
     /* links: links, */
   });
 });
+
+
+usersHtmlRouter.get('/', userController);
