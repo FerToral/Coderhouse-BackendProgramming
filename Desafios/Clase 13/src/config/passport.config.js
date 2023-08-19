@@ -6,6 +6,7 @@ import fetch from 'node-fetch';
 import GitHubStrategy from 'passport-github2';
 import { createHash, isValidPassword } from '../utils/bcrypt.js';
 import { UserService } from '../services/users.service.js';
+import { userService } from '../utils/utils.js';
 const LocalStrategy = local.Strategy
 
 export function initializePassport() {
@@ -97,7 +98,7 @@ export function initializePassport() {
             return done(null, false);
           }
 
-          const userCreated = await UserService.create({ email: username, firstName, password: createHash(password), lastName, age, rol: 'user' });
+          const userCreated = await userService.createOne({ email: username, password: createHash(password), firstName, lastName, age, rol: 'user' });
           console.log(userCreated);
           console.log('User Registration succesful');
           return done(null, userCreated);

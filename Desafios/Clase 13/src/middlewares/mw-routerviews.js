@@ -1,6 +1,6 @@
 //@ts-check
 
-import { productManagerMongo } from "../utils/utils.js";
+import { productService } from "../utils/utils.js";
 import { ProductsModel } from "../dao/models/products.model.js";
 
 
@@ -31,7 +31,7 @@ export const validateProductMiddlewareViews = async (req, res, next) => {
   const id = req.params.pid;
 
   try {
-    const filteredProduct = await productManagerMongo.getProductById(id);
+    const filteredProduct = await productService.getProductById(id);
     
     if (!filteredProduct) {
         return res.status(400).render('error-page', { msg: "Product not found" });

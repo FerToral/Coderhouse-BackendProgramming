@@ -2,8 +2,8 @@
 import { fileURLToPath } from "url";
 import {dirname} from "path";
 import multer from 'multer';
-import { CartManagerMongo } from "../services/cartsManagerMongo.js";
-import { ProductManagerMongo } from "../services/productManagerMongo.js";
+import { CartService} from "../services/carts.service.js";
+import { ProductService} from "../services/products.service.js";
 import { UserService } from "../services/users.service.js";
 
 const storage = multer.diskStorage({
@@ -22,7 +22,7 @@ export const __dirname = dirname(__filename);
 
 /* MiS SERVICIOS MANAGER */
 
-export const cartManagerMongo = new CartManagerMongo();
-export const productManagerMongo = new ProductManagerMongo();
+export const cartService = new CartService();
+export const productService = new ProductService();
 export const userService = new UserService();
 

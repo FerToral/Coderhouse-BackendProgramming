@@ -1,23 +1,29 @@
 //@ts-check
 import express from "express";
+import session from 'express-session';
+import passport from "passport";
+import { initializePassport } from "./config/passport.config.js";
+import MongoStore from 'connect-mongo';
+import cookieParser from "cookie-parser";
 import handlebars from 'express-handlebars';
 import {__dirname} from './utils/utils.js';
 import { connectSocket } from "./utils/connect-socket.js";
 import { connectMongo } from "./utils/connect-db.js";
-import productsRouter from "./routes/api/products-api.router.js";
-import viewsRouter from "./routes/views/views.router.js";
-import {usersRouter} from "./routes/api/users-api.router.js";
+import productsApiRouter from "./routes/api/products-api.router.js";
+import {usersApiRouter} from "./routes/api/users-api.router.js";
+import cartsApiRouter from "./routes/api/carts-api.router.js";
+import sessionsApiRouter from "./routes/api/sessions-api.router.js";
+import registerRouter from './routes/views/register.router.js';
+import sessionsRouter from "./routes/views/sessions.router.js";
+import loginRouter from "./routes/views/login.router.js";
+import logoutRouter from "./routes/views/logout.router.js";
+import productsRouter from "./routes/views/products.router.js"
 import { usersHtmlRouter } from './routes/views/users.html.router.js';
-import { authRouter } from './routes/views/auth.router.js';
-import cartsRouter from "./routes/api/carts-api.router.js";
-import MongoStore from 'connect-mongo';
-import cookieParser from "cookie-parser";
-import passport from "passport";
-import { initializePassport } from "./config/passport.config.js";
-import session from 'express-session';
-import { sessionsRouter } from "./routes/views/sessions.router.js";
-
-
+import viewsRouter from "./routes/views/views.router.js";
+import homeRouter from "./routes/views/home.router.js";
+import profileRouter from "./routes/views/profile.router.js";
+import cartsRouter from "./routes/views/carts.router.js";
+import chatsRouter from "./routes/views/chats.router.js";
 
 const app = express();
 const port = 8080;
@@ -58,12 +64,10 @@ app.use(express.static(__dirname+'/public'));
 
 /* ENDPOINTS */
 app.use('/', viewsRouter);
-app.use('/api/sessions/', sessionsRouter);
-app.use('/auth', authRouter)
-app.use('/api/products/', productsRouter);
-app.use('/api/carts/', cartsRouter);
-app.use('/api/users/',usersRouter);
-app.use('/users', usersHtmlRouter);
+app.use('/api/sessions', sessionsApiRouter);
+app.use('/api/products', productsApiRouter);
+app.use('/api/carts', cartsApiRouter);
+app.use('/api/users',usersApiRouter);
 app.use('/api/sessions/current', (req, res) => {
   return res.status(200).json({
     status: 'success',
@@ -71,6 +75,17 @@ app.use('/api/sessions/current', (req, res) => {
     payload: req.session.user || {},
   });
 });
+
+app.use('/register', registerRouter)
+app.use('/login', loginRouter);
+app.use('/logout', logoutRouter);
+app.use('/sessions', sessionsRouter);
+app.use('/home', homeRouter);
+app.use('/profile', profileRouter);
+app.use('/users', usersHtmlRouter);
+app.use('/products', productsRouter);
+app.use('/carts', cartsRouter);
+app.use('/chats', chatsRouter);
 
 app.get("*", (req, res) => {
   res.status(404).json({ status: "error", msg: "Page not found" });

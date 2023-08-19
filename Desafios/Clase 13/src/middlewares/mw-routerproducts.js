@@ -1,6 +1,6 @@
 //@ts-check
 
-import { productManagerMongo } from "../utils/utils.js";
+import { productService } from "../utils/utils.js";
 import { ProductsModel } from "../dao/models/products.model.js";
 
 
@@ -27,22 +27,22 @@ export const paginationMiddleware = (req, res, next) => {
     next();
 };
 
-export const validateProductMiddleware = async (req, res, next) => {
-  const id = req.params.pid;
+// export const validateProductMiddleware = async (req, res, next) => {
+//   const id = req.params.pid;
 
-  try {
-    const filteredProduct = await productManagerMongo.getProductById(id);
+//   try {
+//     const filteredProduct = await productService.getProductById(id);
     
-    if (!filteredProduct) {
-      return res.status(404).json({ status: "error", data: "Product not found" });
-    }
+//     if (!filteredProduct) {
+//       return res.status(404).json({ status: "error", data: "Product not found" });
+//     }
 
-    req.filteredProduct = filteredProduct;
-    next();
-  } catch (error) {
-    return res.status(500).json({ status: "error", data: error.message });
-  }
-};
+//     req.filteredProduct = filteredProduct;
+//     next();
+//   } catch (error) {
+//     return res.status(500).json({ status: "error", data: error.message });
+//   }
+// };
   
 export const validationProduct = async (req, res, next) => {
   const { title, description, code, price, stock, category, thumbnails } = req.body;

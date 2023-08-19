@@ -7,7 +7,11 @@ export class UserService {
     const users = await UserModel.find({});
     return users;
   }
-
+  async getUsersPagination(page){
+    //TODO
+    const users = await UserModel.paginate({}, {limit: 10, page: page || 1});
+    return users;
+  }
   async findUser(email, password) {
     const user = await UserModel.findOne({ email: email });
     if (user && isValidPassword(password, user.password)) {
@@ -18,14 +22,17 @@ export class UserService {
   }
 
   async findUserByEmail(email) {
+    //TODO
     const user = await UserModel.findOne(
       { email: email },
       {
         _id: true,
         email: true,
-        username: true,
         password: true,
+        firstName: true,
+        lastName: true,
         rol: true,
+        age: true
       }
     );
     return user || false;
@@ -45,23 +52,14 @@ export class UserService {
     return userCreated;
   }
 
-  async deletedOne(_id) {
+  async deleteOne(_id) {
     const deleted = await UserModel.deleteOne({ _id: _id });
     return deleted;
   }
 
-  async updateOne({ _id, email, username, password, rol }) {
-    const userUptaded = await UserModel.updateOne(
-      {
-        _id: _id,
-      },
-      {
-        email,
-        username,
-        password,
-        rol,
-      }
-    );
+  async updateOne(userUpdate) {
+    const {_id, ...updateData} = userUpdate
+    const userUptaded = await UserModel.updateOne({_id: _id,},updateData);
     return userUptaded;
   }
 
