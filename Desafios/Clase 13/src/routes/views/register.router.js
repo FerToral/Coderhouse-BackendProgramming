@@ -1,7 +1,7 @@
 //@ts-check
 import express from 'express';
 import passport from 'passport';
-import { registerController } from '../../controllers/register.controller';
+import { registerController } from '../../controllers/register.controller.js';
 
 const registerRouter = express.Router();
 

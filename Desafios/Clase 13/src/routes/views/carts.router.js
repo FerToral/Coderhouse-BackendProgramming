@@ -1,7 +1,6 @@
 //@ts-check
 import express from "express";
-import { cartService } from "../../utils/utils";
-import { cartController } from "../../controllers/carts.controller";
+import { cartController } from "../../controllers/carts.controller.js";
 
 const cartsRouter = express.Router();
 

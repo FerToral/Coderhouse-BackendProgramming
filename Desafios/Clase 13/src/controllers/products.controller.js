@@ -1,6 +1,6 @@
 //@ts-check
 
-import { productService } from "../utils/utils";
+import { productService } from "../utils/utils.js";
 
 class ProductController{
 

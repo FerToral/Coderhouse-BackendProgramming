@@ -1,5 +1,5 @@
 //@ts-check
-import { userService } from "../utils/utils";
+import { userService } from "../utils/utils.js";
 
 class UserController{
     async getUsersPagination(req, res){

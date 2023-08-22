@@ -1,5 +1,6 @@
 //@ts-check
 
+import { productDao } from "../dao/models/mongo/products.mongo.js";
 import { ProductsModel } from "../dao/models/products.model.js";
 
 export class ProductService {
@@ -47,13 +48,13 @@ export class ProductService {
     }
     
     async getProducts(){
-        this.#products = await ProductsModel.find({});
+        this.#products = await productDao.getAll()
         return this.#products;
     }
     
     async getProductById(id){
         try{
-            const search = await ProductsModel.findById(id);
+            const search = await productDao.getById(id);
             if(!search)
                 throw new Error('Product not found'); 
             return search;
@@ -63,15 +64,15 @@ export class ProductService {
         }
         
     }
-    async updateProduct(id, campo){
-        await ProductsModel.updateOne({_id:id}, campo);
+    async updateProduct(id, updateData){
+        await productDao.updateById(id, updateData)
    
     }
     async deleteProduct(id){
-        await ProductsModel.deleteOne({_id:id})
+        await productDao.deleteById(id);
     }
     async #validationProduct(newProduct){
-        const search = await ProductsModel.find({"code": newProduct.code});
+        const search = await productDao.updateById(newProduct.code);
         const codeRepeate = search.length > 0?true:false;
         const allValuesExist = Object.entries(newProduct).every(([key, value]) => key === 'thumbnails' || (!!value && value !== ''));
 
@@ -87,7 +88,6 @@ export class ProductService {
     }
     async addProduct(newProduct){
         try{
-            // await this.#validationProduct(newProduct);
             await ProductsModel.create(newProduct)
         }catch(error){
             throw new Error(`${error.message}. Error adding product to MongoDB`)

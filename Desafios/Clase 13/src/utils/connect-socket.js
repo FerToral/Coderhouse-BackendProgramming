@@ -1,7 +1,7 @@
 //@ts-check
 
 import {Server} from 'socket.io';
-import { cartManagerMongo, productManagerMongo } from './utils.js';
+import { cartService, productService } from './utils.js';
 import { ProductsModel } from "../dao/models/products.model.js";
 import { MsgModel } from "../dao/models/msgs.model.js";
 
@@ -21,7 +21,7 @@ export async function connectSocket(httpServer){
                 status: true,
             };
             
-            await productManagerMongo.addProduct(newProductCompleted)
+            await productService.addProduct(newProductCompleted)
             //Busco el último
             const latestProduct = await ProductsModel.findOne({}, {sort: {_id: -1}});
             const newProductObject = latestProduct.toObject();
@@ -41,14 +41,14 @@ export async function connectSocket(httpServer){
         });
 
         socket.on("delete-product", async (idToDelete) => {
-            await productManagerMongo.deleteProduct(idToDelete);
+            await productService.deleteProduct(idToDelete);
             socketServer.emit("delete-product-in-table", idToDelete);
         })
 
         socket.on("add-product", async (idToAdd,title) => {
             //Carrito Default
             const cid = '649797b077e8959bcadabdea';
-            await cartManagerMongo.addProductToCart(cid,idToAdd);
+            await cartService.addProductToCart(cid,idToAdd);
             socketServer.emit("notification-add-success", title);  
         })
         

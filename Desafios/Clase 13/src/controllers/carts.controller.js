@@ -1,5 +1,5 @@
 //@ts-check
-import { cartService, productService } from "../utils/utils";
+import { cartService, productService } from "../utils/utils.js";
 
 class CartController{
     async renderCart(req, res) {

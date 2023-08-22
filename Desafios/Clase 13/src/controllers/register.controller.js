@@ -1,6 +1,3 @@
-// controllers/registerController.js
-import passport from 'passport';
-import { userService } from '../../utils/utils';
 
 class RegisterController {
     async getRegisterForm(req, res) {

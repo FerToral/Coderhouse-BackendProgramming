@@ -1,17 +1,18 @@
 //@ts-check
-import { CartsModel } from "../dao/models/carts.model.js";
+
+import { cartDao } from "../dao/models/mongo/carts.mongo.js";
 
 export class CartService{
 
     constructor(){}
    
-    async getCartById(cId){
-        const search = await CartsModel.findOne({_id:cId})
+    async getCartById(cartId){
+        const search = await cartDao.getCartById(cartId);
         return search? search: (()=> {throw new Error('Cart not Found')});
     }
     
-    async getCartByIdPopulate(cId){
-      const cartFound = await CartsModel.findById({_id:cId}).populate('products.product');
+    async getCartByIdPopulate(cartId){
+      const cartFound = await cartDao.getCartByIdPopulate(cartId);
       return cartFound;
     }
     async getPopulatedCartProducts(cId) {
@@ -23,66 +24,46 @@ export class CartService{
       return cartProducts;
   }
     async createCart(){
-        const newCart = await CartsModel.create({products: []});
+        const newCart = await cartDao.createCart();
         return newCart;
     }
-    async addProductToCart(cId, pId) {
+    async addProductToCart(cartId, productId) {
       try {
-        const cart = await CartsModel.findOneAndUpdate(
-          { _id: cId, "products.product": pId },
-          { $inc: { "products.$.quantity": 1 } },
-          { new: true }
-        );
+        const cart = await cartDao.findAndIncreaseStock(cartId, productId);
     
         if (!cart) {
-          await CartsModel.findOneAndUpdate(
-            { _id: cId },
-            { $push: { products: { product: pId, quantity: 1 } } },
-            { new: true }
-          );
+          await cartDao.findAndAddProduct(cartId, productId);
         }
       } catch (error) {
         throw new Error('Error adding product to cart');
       }
     }
     
-    async deleteProductFromCart(cId,pId){
-      const result = await CartsModel.findOneAndUpdate(
-        { _id: cId, "products.product": pId },
-        {$pull: {products: { product: pId}}},
-      )
+    async deleteProductFromCart(cartId,productId){
+      const result = await cartDao.deleteProduct(cartId, productId)
       return result;
     }
-    async updateStockProductoFromCart(cId,pId,stockUpdate){
-      await CartsModel.updateOne(
-        { _id: cId, "products.product": pId},
-        { $set: { "products.$.quantity": stockUpdate } }
-        
-      )
+    async updateStockProductoFromCart(cartId,productId,stockUpdate){
+      await cartDao.updateStock(cartId, productId, stockUpdate)
     }
-    async emptyCart(cId) {
+    async emptyCart(cartId) {
       try{
-        const cart = await CartsModel.findById(cId);
+        const cart = await cartDao.getCartById(cartId)
         if (!cart) {
           throw new Error("Carrito no encontrado");
         }
 
       cart.products = []; // Elimina todos los productos del carrito
-      await cart.save(); // Guarda los cambios en la base de datos
+      await cartDao.saveCart(); // Guarda los cambios en la base de datos
       }catch(error){
         throw new Error(error)
       }
     }
 
-    
-    async updateProductsFromCart(cId, pUpdate) {
-      const result = await CartsModel.updateOne(
-        { _id: cId },
-        { $set: { products: pUpdate } }
-      );
+    async updateProductsFromCart(cartId, productsUpdate) {
+      const result = await cartDao.updateCart(cartId, productsUpdate)
       return result;
     }
     
       
-  
 }

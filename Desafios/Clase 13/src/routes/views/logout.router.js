@@ -1,6 +1,5 @@
 import express from "express";
-import passport from 'passport';
-import { loginController } from "../../controllers/login.controller";
+import { loginController } from "../../controllers/login.controller.js";
 
 //@ts-check
 const logoutRouter = express.Router();

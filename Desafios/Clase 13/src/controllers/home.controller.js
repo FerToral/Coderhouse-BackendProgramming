@@ -15,4 +15,4 @@ class HomeController{
     }
 }
 
-export const homeController = HomeController();
+export const homeController = new HomeController();
