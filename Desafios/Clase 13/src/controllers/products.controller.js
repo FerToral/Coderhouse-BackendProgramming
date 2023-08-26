@@ -1,5 +1,6 @@
 //@ts-check
 
+import { ProductDTO } from "../dtos/productDTO.js";
 import { productService } from "../utils/utils.js";
 
 class ProductController{
@@ -7,7 +8,7 @@ class ProductController{
     async renderProduct(req, res){
         const pid = req.params.pid;
         const productFound = await productService.getProductById(pid);
-        const product = productService.productToObject(productFound);
+        const product = new ProductDTO(productFound);
     
         return res.render('product-id-details', {
             product
@@ -19,7 +20,7 @@ class ProductController{
         const { firstName, email, rol} = req.sessionData;
         
         const paginationProducts = await productService.paginationProduct(limit, page, query, sort);
-        const listProducts = productService.paginationToObject(paginationProducts);
+        const listProducts = paginationProducts.docs.map(product => new ProductDTO(product));
         return res.render('products', {
             paginationProducts,
             listProducts,
@@ -33,10 +34,9 @@ class ProductController{
         const { firstName, email, rol} = req.sessionData;
         try{
             const products = await productService.getProducts();
-            const productsToObject = productService.productsToObject(products);
-
+            const productsDTO = products.docs.map(product => new ProductDTO(product));
             return res.render('realTimeProducts',{
-                products: productsToObject,
+                products: productsDTO,
                 firstName,
                 email,
                 rol
@@ -50,23 +50,23 @@ class ProductController{
     async getPagination(req, res){
         const { limit, page, query, sort } = req.paginationOptions;
         try{
-          const products = await productService.paginationProduct(limit, page, query, sort);
-      
-          return res.status(200).json({
-            status: 'succesfull',
-            msg: 'Product list',
-            data: {
-              payload: products.docs,
-              totalPages: products.totalPages,
-              prevPage: products.prevPage,
-              nextPage: products.nextPage,
-              page: products.page,
-              hasPrevPage: products.hasPrevPage,
-              hasNextPage: products.hasNextPage,
-              prevLink: products.prevLink,
-              nextLink: products.nextLink,
-            },
-          });
+            const products = await productService.paginationProduct(limit, page, query, sort);
+            const productsDTO = products.docs.map(product => new ProductDTO(product));
+            return res.status(200).json({
+                status: 'succesfull',
+                msg: 'Product list',
+                data: {
+                payload: productsDTO,
+                totalPages: products.totalPages,
+                prevPage: products.prevPage,
+                nextPage: products.nextPage,
+                page: products.page,
+                hasPrevPage: products.hasPrevPage,
+                hasNextPage: products.hasNextPage,
+                prevLink: products.prevLink,
+                nextLink: products.nextLink,
+                },
+            });
         }catch(error){
           return res.status(500).json({ status: 'Error', msg: 'Something went wrong', data: { error } });
         }
@@ -77,9 +77,11 @@ class ProductController{
         const id = req.params.pid;
         try{
             const filteredProduct = await productService.getProductById(id);
+            const productDTO = new ProductDTO(filteredProduct);
+            
             res.status(200).json({ 
                 status: "success", 
-                data: filteredProduct});
+                payload: productDTO});
         }catch(error){
             res.status(404).json({
                 status: "error", 
@@ -88,18 +90,15 @@ class ProductController{
     }
     
     async post(req, res){
-        const id = req.params.pid;
 
-        try {
-            const filteredProduct = await productService.getProductById(id);
-            
-            if (!filteredProduct) {
-            return res.status(404).json({ status: "error", data: "Product not found" });
-            }
-            res.status(201).json({ status: "success", data: filteredProduct})
-
-        } catch (error) {
-            return res.status(500).json({ status: "error", data: error.message });
+        const newProduct = req.product;
+        try{
+            const productDTO = new ProductDTO(newProduct)
+            await productService.addProduct(productDTO)
+            res.status(201).json({ status: "success", data: productDTO})
+        
+        } catch (error){
+          res.status(400).json({status: "error" , data: error.message });
         }
         
     }
@@ -109,7 +108,8 @@ class ProductController{
         const {campo } = req.body;
     
         try {
-            const updatedProduct = await productService.updateProduct(pid,campo);
+            const updateData = new ProductDTO(campo);
+            const updatedProduct = await productService.updateProduct(pid,updateData);
             res.status(200).json({ status: "success", msg: "Product updated", data: updatedProduct });
     
         } catch (error) {
@@ -122,7 +122,7 @@ class ProductController{
       
         try {
             const deletedProduct = await productService.deleteProduct(id)
-            res.status(200).json({ status: "success", msg: "Removed Product", data: deletedProduct });
+            res.status(200).json({ status: "success", msg: "Removed Product", payload: deletedProduct });
     
         } catch (error) {
             res.status(400).json({ status: "error", data: "Error deleting the product" });

@@ -8,7 +8,7 @@ class HomeController{
             const firstName = req.session.user?.firstName;
             const rol = req.session.user?.rol;
             
-            return res.status(200).render('home', { title, email,firstName, rol });
+            return res.status(200).render('home', { title,email , firstName, rol });
         } catch (error) {
             res.status(501).send({ status: 'error', msg: 'Server Error', error: error });
         }

@@ -1,5 +1,5 @@
 //@ts-check
-import { UserModel } from '../users.model.js';
+import { UserModel } from '../models/users.model.js';
 
 
 export class UserDao {

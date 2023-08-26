@@ -1,6 +1,7 @@
 //@ts-check
 
-import { cartDao } from "../dao/models/mongo/carts.mongo.js";
+import { cartDao } from "../dao/mongo/carts.mongo.js";
+import { ProductDTO } from "../dtos/productDTO.js";
 
 export class CartService{
 
@@ -18,7 +19,7 @@ export class CartService{
     async getPopulatedCartProducts(cId) {
       const cartFound = await this.getCartByIdPopulate(cId);
       const cartProducts = cartFound.products.map(prod => ({
-        ...prod.product.toObject(),
+        ...new ProductDTO(prod),
         quantity: prod.quantity
     }));
       return cartProducts;

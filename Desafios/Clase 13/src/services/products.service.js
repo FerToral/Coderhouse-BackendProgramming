@@ -1,7 +1,7 @@
 //@ts-check
 
-import { productDao } from "../dao/models/mongo/products.mongo.js";
 import { ProductsModel } from "../dao/models/products.model.js";
+import { productDao } from "../dao/mongo/products.mongo.js";
 
 export class ProductService {
     #products=[];

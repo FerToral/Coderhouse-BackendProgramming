@@ -1,4 +1,5 @@
 //@ts-check
+import { UserDTO } from "../dtos/userDTO.js";
 import { userService } from "../utils/utils.js";
 
 class UserController{
@@ -8,17 +9,10 @@ class UserController{
         const { page /* , limit, query, sort */ } = req.query;
         const users = await userService.getUsersPagination(page);
         //TODO DTO
-        const usersObj = users.docs.map((user) => {
-          return {
-            id: user._id.toString(),
-            firstName: user.firstName,
-            lastName: user.lastName,
-            email: user.email,
-          };
-        });
+        const usersDTO = users.docs.map((user) => new UserDTO(user));
 
         return res.status(200).render('usuarios', {
-          usuarios: usersObj,
+          usuarios: usersDTO,
           pagingCounter: users.pagingCounter,
           totalPages: users.totalPages,
           page: users.page,
@@ -36,11 +30,12 @@ class UserController{
   async getUsers(req,res){
     try {
       const users = await userService.getAll();
- 
+      const usersDTO = users.map((user) => new UserDTO(user));
+
       return res.status(200).json({
         status: 'success',
         msg: 'listado de usuarios',
-        data: users,
+        data: usersDTO,
       });
     } catch (e) {
      
@@ -54,24 +49,24 @@ class UserController{
 
   async post(req,res){
     try {
-      const { firstName, lastName, email, password, rol } = req.user;
+      const { firstName, lastName, email, password, rol, age } = req.user;
+      
       
       const userCreated = await userService.createOne({
         firstName, 
         lastName, 
         email,
         password,
-        rol
+        rol,
+        age
       });
+
+      const userDTO = new UserDTO(userCreated);
+
       return res.status(201).json({
         status: 'success',
         msg: 'user created',
-        payload: {
-                  _id: userCreated._id,
-                  email: userCreated.email,
-                  password: userCreated.password,
-                  rol: userCreated.rol,
-              },
+        payload: {userDTO},
       });
     } catch (e) {
       return res.status(500).json({
@@ -126,10 +121,11 @@ class UserController{
       });
 
       if (userUpdated.matchedCount > 0) {
+        const userDTO = new UserDTO(userUpdated);
         return res.status(201).json({
           status: "success",
           msg: "user uptaded",
-          payload: {},
+          payload: userDTO,
         });
       } else {
         return res.status(404).json({
