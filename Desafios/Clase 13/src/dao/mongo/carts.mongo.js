@@ -1,6 +1,6 @@
 import { CartsModel } from "../models/carts.model.js";
 
-export class CartDAO {
+class CartDAO {
 
     async getCartById(cartId) {
         return await CartsModel.findOne({ _id: cartId });
@@ -62,4 +62,6 @@ export class CartDAO {
 
 }
 
-export const cartDao = new CartDAO();
+const cartDao = new CartDAO();
+
+export default cartDao;

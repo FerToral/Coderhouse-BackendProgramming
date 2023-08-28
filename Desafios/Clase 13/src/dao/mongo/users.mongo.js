@@ -2,7 +2,7 @@
 import { UserModel } from '../models/users.model.js';
 
 
-export class UserDao {
+class UserDao {
   async getAll() {
     return await UserModel.find({});
   }
@@ -39,4 +39,5 @@ export class UserDao {
   }
 }
 
-export const userDao = new UserDao();
+const userDao = new UserDao();
+export default userDao;

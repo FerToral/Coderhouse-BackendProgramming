@@ -26,4 +26,6 @@ export class ProductDao {
   }
 }
 
-export const productDao = new ProductDao();
+const productDao = new ProductDao();
+
+export default productDao;
