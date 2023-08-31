@@ -1,4 +1,4 @@
-
+//@ts-check
 import config from "../config/config.js";
 import { connectMongo } from "../utils/connect-db.js";
 
@@ -14,18 +14,18 @@ switch(config.persistence){
         userDao = UsersMongo;
 
         const {default:ProductsMongo} = await import('./mongo/products.mongo.js');
-        Products = ProductsMongo;
+        productDao = ProductsMongo;
 
         const {default:CartsMongo} = await import('./mongo/carts.mongo.js');
-        Carts = CartsMongo;
+        cartDao = CartsMongo;
 
         const {default:ChatsMongo} = await import('./mongo/chats.mongo.js');
-        Chats = ChatsMongo;
+        chatDao = ChatsMongo;
         
         break;
     
     case "MEMORY":
-        const {default:UsersMemory} = await import('./users.memory.js');
+        const {default:UsersMemory} = await import('./memory/users.memory.js');
         userDao = UsersMemory;
         break;
 }

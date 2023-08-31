@@ -4,8 +4,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon ./src/app.js",
-    "start": "node ./src/app.js"
+    "dev": "nodemon ./src/app.js --mode development",
+    "start": "node ./src/app.js PROD"
   },
   "author": "",
   "license": "ISC",
