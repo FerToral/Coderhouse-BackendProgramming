@@ -1,6 +1,7 @@
-import { UserModel } from '../dao/models/users.model.js';
+
 import { isValidPassword, createHash } from '../utils/bcrypt.js';
-import { userDao } from '../dao/models/mongo/users.mongo.js';
+import { userDao } from '../dao/factory.js';
+
 
 export class UserService {
  

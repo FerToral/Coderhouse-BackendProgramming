@@ -20,4 +20,6 @@ cartsApiRouter.put('/:cid', cartController.putCart);
 
 cartsApiRouter.put('/:cid/products/:pid', cartController.putStock);
 
+cartsApiRouter.put('/:cid/purchase', cartController.purchase)
+
 export default cartsApiRouter;

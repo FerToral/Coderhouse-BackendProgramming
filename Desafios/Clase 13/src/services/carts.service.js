@@ -1,7 +1,10 @@
 //@ts-check
 
-import { cartDao } from "../dao/mongo/carts.mongo.js";
+import { cartDao } from "../dao/factory.js";
+import { productService, ticketService } from "../utils/utils.js";
 import { ProductDTO } from "../dtos/productDTO.js";
+
+
 
 export class CartService{
 
@@ -65,6 +68,39 @@ export class CartService{
       const result = await cartDao.updateCart(cartId, productsUpdate)
       return result;
     }
+
+    async purchase(cartId){
+      try {
+        const cart = await this.getCartByIdPopulate(cartId)
+        const productsWithInsufficientStock = []
+        const productsToPurchase = [];
+        let totalAmount = 0;
+  
+        for(const cartItem of cart.products){
+  
+          if( cartItem.product.stock < cartItem.quantity )
+            productsWithInsufficientStock.push(cartItem.product._id);
+          
+          productsToPurchase.push(cartItem);
+          const update = {
+            stock: cartItem.product.stock - cartItem.quantity
+          }
+          totalAmount+= cartItem.product.price * cartItem.quantity;
+          await productService.updateProduct(cartItem.product._id, update);
+          await this.deleteProductFromCart(cartId, cartItem.product._id);
+
+        }
+
+        const email = req.session.user.email; // O cualquier forma de obtener el comprador
+        const createdTicket = await ticketService.createTicket(totalAmount, email);
+  
+        if(productsWithInsufficientStock.length > 0){
+            return productsWithInsufficientStock;
+  
+        }
+      } catch (error) {
+            throw new Error(error);
+      }
+    }
     
-      
 }

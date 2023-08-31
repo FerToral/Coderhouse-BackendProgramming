@@ -24,6 +24,8 @@ import homeRouter from "./routes/views/home.router.js";
 import profileRouter from "./routes/views/profile.router.js";
 import cartsRouter from "./routes/views/carts.router.js";
 import chatsRouter from "./routes/views/chats.router.js";
+import { UserDTO } from "./dtos/userDTO.js";
+import { isAdmin, isUser } from "./middlewares/auth.js";
 
 const app = express();
 const port = 8080;
@@ -65,14 +67,15 @@ app.use(express.static(__dirname+'/public'));
 /* ENDPOINTS */
 app.use('/', viewsRouter);
 app.use('/api/sessions', sessionsApiRouter);
-app.use('/api/products', productsApiRouter);
-app.use('/api/carts', cartsApiRouter);
+app.use('/api/products', isAdmin, productsApiRouter);
+app.use('/api/carts', isUser, cartsApiRouter);
 app.use('/api/users',usersApiRouter);
 app.use('/api/sessions/current', (req, res) => {
+  const sesion = new UserDTO(req.session.user)
   return res.status(200).json({
     status: 'success',
     msg: 'datos de la session',
-    payload: req.session.user || {},
+    payload: sesion,
   });
 });
 
@@ -83,9 +86,9 @@ app.use('/sessions', sessionsRouter);
 app.use('/home', homeRouter);
 app.use('/profile', profileRouter);
 app.use('/users', usersHtmlRouter);
-app.use('/products', productsRouter);
+app.use('/products',productsRouter);
 app.use('/carts', cartsRouter);
-app.use('/chats', chatsRouter);
+app.use('/chats', isUser, chatsRouter);
 
 app.get("*", (req, res) => {
   res.status(404).json({ status: "error", msg: "Page not found" });

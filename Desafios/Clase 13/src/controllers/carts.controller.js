@@ -2,6 +2,7 @@
 import { cartService, productService } from "../utils/utils.js";
 
 class CartController{
+  constructor(){}
     async renderCart(req, res) {
       const cartId = req.params.cid;
       try {
@@ -94,6 +95,27 @@ class CartController{
           res.status(404).json({status: "error" , data: error.message });
         }
       
+    }
+
+    async purchase(req, res){
+      const  cartId = req.params.cid;
+      try {
+        const productsWithInsufficientStock = await cartService.purchase(cartId);
+
+        return res.status(201).json({
+          status: 'success',
+          msg: 'Purchase completed',
+          productsNotPurchased: productsWithInsufficientStock,
+        });
+
+      } catch (error) {
+        return res.status(500).json({
+            status: 'error',
+            msg: `An error occurred during the purchase process. ${error}`,
+        });
+      }
+      
+
     }
 }
 

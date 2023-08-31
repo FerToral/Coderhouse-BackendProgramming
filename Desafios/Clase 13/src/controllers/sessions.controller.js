@@ -1,5 +1,7 @@
 //@ts-check
 
+import { UserDTO } from "../dtos/userDTO.js";
+
 class SessionController{
     async getProfile(req, res){
         const user = req.session.user;
@@ -15,6 +17,14 @@ class SessionController{
         res.redirect('/');
     }
 
+    async current(req, res){
+        const sesion = new UserDTO(req.session.user)
+        return res.status(200).json({
+            status: 'success',
+            msg: 'datos de la session',
+            payload: sesion,
+        });
+    }
     
 
 }

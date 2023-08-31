@@ -1,7 +1,7 @@
 //@ts-check
 
 import { ProductsModel } from "../dao/models/products.model.js";
-import { productDao } from "../dao/mongo/products.mongo.js";
+import { productDao } from "../dao/factory.js";
 
 export class ProductService {
     #products=[];
@@ -31,20 +31,6 @@ export class ProductService {
         setLinks();
       
         return products;
-    }
-    paginationToObject(paginationProducts){
-        const result = paginationProducts.docs.map(product => product.toObject());
-        return result;
-    }
-
-    productsToObject(products){
-        const result = products.map(product => product.toObject());
-        return result;
-    }
-     
-    productToObject(product){
-        const result = product.toObject();
-        return result;
     }
     
     async getProducts(){
