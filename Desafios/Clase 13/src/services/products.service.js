@@ -74,7 +74,7 @@ export class ProductService {
     }
     async addProduct(newProduct){
         try{
-            await ProductsModel.create(newProduct)
+            await productDao.create(newProduct)
         }catch(error){
             throw new Error(`${error.message}. Error adding product to MongoDB`)
         }

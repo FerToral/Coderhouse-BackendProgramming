@@ -1,0 +1,18 @@
+<h2>Home</h2>
+<div class="container">
+    <h2>Lista de Productos con Handlebars y Sockets</h2>
+    {{#each products}}
+        <ul class="list-group mb-4">
+            <li class="list-group-item">Title: {{title}}</li>
+            <li class="list-group-item">Description: {{descripcion}}</li>
+            <li class="list-group-item">Price: {{price}}</li>
+            <li class="list-group-item">Code: {{code}}</li>
+            <li class="list-group-item">Stock: {{stock}}</li>
+            <li class="list-group-item">Category:{{category}}</li>
+            <li class="list-group-item">Thumbnail:<a href="{{thumbnail}}">Product's Image</a></li>
+            
+        </ul>
+    {{/each}}
+    
+
+</div>

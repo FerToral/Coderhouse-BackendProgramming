@@ -1,0 +1,9 @@
+const EErrors = {
+    ROUTING_ERROR:1,
+    INVALID_TYPES_ERROR:2,
+    NOT_ACCESS_AUTORIZATION:3,
+    AUTHOTENTICATION_ERROR:4,
+    DATABASE_ERROR:5
+}
+
+export default EErrors;

@@ -1,0 +1,103 @@
+
+<div class="container mt-4 mw-100">
+    <div class="row">
+        <di>
+            <h2>Datos del usuario</h2>
+            <div class="data-profile">
+                <ul>
+                    <li>Email: {{email}}</li>
+                    {{#if admin}}
+                        <li>Role: admin</li>
+                    {{else}}
+                        <li>Role: user</li>
+                    {{/if}}
+                </ul>
+            </div>
+        </di>
+    </div>
+    <h1>Bievenido, {{firstName}}</h1>
+
+<a href='/logout'>LOGOUT</a>
+
+    <div class="row">
+        <div class="col-md-12 col-lg-8 table-style p-4 ">
+             
+            <legend>Lista de Productos con Handlebars y Sockets</legend>
+            <table class="table table-light" id="list-products">
+                    <thead class="fs-5">
+                        <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Title</th>
+                        <th scope="col">Description</th>
+                        <th scope="col">Price</th>
+                        <th scope="col">Code</th>
+                        <th scope="col">Stock</th>
+                        <th scope="col">Category</th>
+                        <th scope="col">Thumbnail</th>
+                        </tr>
+                    </thead>
+                    <tbody id="list-products">
+                        {{#each products}}
+                        <tr>
+                            <th scope="row"> {{@index}}</th>
+                            <td>{{title}}</td>
+                            <td>{{description}}</td>
+                            <td>{{price}}</td>
+                            <td>{{code}}</td>
+                            <td>{{stock}}</td>
+                            <td>{{category}}</td>
+                            <td><a href="{{thumbnails}}">Product's Image</a></td>
+                            <td> <button type="button" class="btn btn-danger btn-delete" value={{_id}}>Delete</button>
+                            </td>
+                        </tr>
+                        {{/each}}
+                    </tbody>
+            </table>
+            
+        </div>
+        <div class="col">
+            <form class="p-4" id="form-products">
+                <legend>Ingresar nuevo producto</legend>
+                <div class="mb-3">
+                    <label for="title-product" class="form-label">Title</label>
+                    <input type="text" class="form-control" id="title-product" placeholder="Title">
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="stock-product" class="form-label">Stock</label>
+                        <input type="text" class="form-control" id="stock-product" placeholder="Stock">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="price-product" class="form-label">Price</label>
+                        <input type="text" class="form-control" id="price-product" placeholder="Price">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="category-product" class="form-label">Category</label>
+                        <input type="text" class="form-control" id="category-product" placeholder="Category">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="code-product" class="form-label">Code</label>
+                        <input type="text" class="form-control" id="code-product" placeholder="Code">
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="thumbnail-product" class="form-label">Thumbnail</label>
+                    <input type="text" class="form-control" id="thumbnail-product" placeholder="Thumbnail">
+                </div>
+                <div class="mb-3">
+                    <label for="description-product" class="form-label">Description</label>
+                    <textarea class="form-control" id="description-product" placeholder="Description" rows="3"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Create Product</button>
+            </form>
+
+        </div>
+    </div>
+    
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="/js/index.js"></script>
