@@ -22,7 +22,7 @@ export const uploader = multer({storage});
 // export const __filename = fileURLToPath(import.meta.url);
 // export const __dirname = dirname(__filename);
 
-export const __filename = dirname(fileURLToPath(import.meta.url));
+export const __filename = fileURLToPath(import.meta.url);
 const __dirnameCurrent = dirname(__filename);
 export const __dirname = path.resolve(__dirnameCurrent, '..')
 

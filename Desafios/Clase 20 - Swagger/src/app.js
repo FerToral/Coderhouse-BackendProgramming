@@ -8,7 +8,6 @@ import cookieParser from "cookie-parser";
 import handlebars from 'express-handlebars';
 import {__dirname} from './utils/utils.js';
 import { connectSocket } from "./utils/connect-socket.js";
-import { connectMongo } from "./utils/connect-db.js";
 import productsApiRouter from "./routes/api/products-api.router.js";
 import {usersApiRouter} from "./routes/api/users-api.router.js";
 import cartsApiRouter from "./routes/api/carts-api.router.js";
@@ -40,7 +39,7 @@ const httpServer = app.listen(port, () => {
   console.log(`Server runing on port http://localhost:${port}`)
 });
 
-
+logger.info(`${__dirname}`)
 connectSocket(httpServer);
 const swaggerOptions = {
   definition:{
