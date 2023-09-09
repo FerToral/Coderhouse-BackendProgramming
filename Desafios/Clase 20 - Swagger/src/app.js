@@ -29,8 +29,10 @@ import { isAdmin, isUser } from "./middlewares/auth.js";
 import compression from "express-compression";
 import mockingRouter from "./routes/api/mocking.router.js";
 import errorHandler from "./middlewares/errors/index.js"
-import { addLogger } from "./utils/logger.js";
+import { addLogger, logger } from "./utils/logger.js";
 import loggerRouter from "./routes/api/logger-api.router.js";
+import swaggerJSDoc from "swagger-jsdoc";
+import swaggerUiExpress from "swagger-ui-express";
 
 const app = express();
 const port = 8080;
@@ -38,8 +40,21 @@ const httpServer = app.listen(port, () => {
   console.log(`Server runing on port http://localhost:${port}`)
 });
 
-connectMongo();
+
 connectSocket(httpServer);
+const swaggerOptions = {
+  definition:{
+    openapi: '3.0.1',
+    info:{
+      title:"Ecommerce Coder Documentation",
+      description: "API implemented with swagger to document our eccommerce project"
+    }
+  },
+  apis: [`${__dirname}/docs/**/*.yaml`]
+}
+
+const specs = swaggerJSDoc(swaggerOptions);
+app.use('/apidocs', swaggerUiExpress.serve, swaggerUiExpress.setup(specs));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -68,6 +83,7 @@ app.engine('handlebars', handlebars.engine());
 app.set('views',__dirname+'/views');
 app.set('view engine', 'handlebars');
 
+
 /* ARCHIVOS PUBLICOS */
 app.use(express.static(__dirname+'/public'));
 
@@ -76,7 +92,8 @@ app.use(addLogger)
 
 
 /* ENDPOINTS */
-app.use('/', viewsRouter);
+app.use('/', homeRouter);
+
 app.use('/api/sessions', sessionsApiRouter);
 app.use('/api/products', isAdmin, productsApiRouter);
 app.use('/api/carts', isUser, cartsApiRouter);
@@ -95,7 +112,6 @@ app.use('/register', registerRouter)
 app.use('/login', loginRouter);
 app.use('/logout', logoutRouter);
 app.use('/sessions', sessionsRouter);
-app.use('/home', homeRouter);
 app.use('/profile', profileRouter);
 app.use('/users', usersHtmlRouter);
 app.use('/products',productsRouter);

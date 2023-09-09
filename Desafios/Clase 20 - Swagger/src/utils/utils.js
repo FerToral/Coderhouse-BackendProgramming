@@ -1,6 +1,6 @@
 //@ts-check
 import { fileURLToPath } from "url";
-import {dirname} from "path";
+import path, {dirname} from "path";
 import multer from 'multer';
 import { CartService} from "../services/carts.service.js";
 import { ProductService} from "../services/products.service.js";
@@ -17,8 +17,14 @@ const storage = multer.diskStorage({
 })
 
 export const uploader = multer({storage});
-export const __filename = fileURLToPath(import.meta.url);
-export const __dirname = dirname(__filename);
+
+//Modificado para poder funcionar dentro de la carpeta Utils
+// export const __filename = fileURLToPath(import.meta.url);
+// export const __dirname = dirname(__filename);
+
+export const __filename = dirname(fileURLToPath(import.meta.url));
+const __dirnameCurrent = dirname(__filename);
+export const __dirname = path.resolve(__dirnameCurrent, '..')
 
 
 /* MiS SERVICIOS MANAGER */

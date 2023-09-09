@@ -1,4 +1,4 @@
-import { MsgModel } from "../models/products.model.js";
+import {MsgModel} from "../models/msgs.model.js";
 
 class ChatDao {
   async getAll() {

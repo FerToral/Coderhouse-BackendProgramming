@@ -1,9 +1,11 @@
+//@ts-check
 class LoginController{
 
     async renderLoginPage(req, res){
         try {
+            req.logger.info("Render Login")
             const title = 'CityCode - Login';
-            return res.status(200).render('login', { title });
+            return res.render('login-form', { title });
         } catch (err) {
             res.status(501).send({ status: 'error', msg: 'Server Error', error: err });
         }

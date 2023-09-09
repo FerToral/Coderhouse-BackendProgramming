@@ -1,10 +1,8 @@
 //@ts-check
 import dotenv from 'dotenv';
 import { Command } from 'commander';
-import { dirname } from 'path';
-import { fileURLToPath } from 'url';
-const __filename = fileURLToPath(import.meta.url);
-export const __dirname = dirname(__filename);
+import { logger } from '../utils/logger.js';
+
 // Inicializamos el programa Commander
 export const program = new Command();
 
@@ -20,13 +18,16 @@ const dao = program.opts().dao;
 
 // Cargamos las variables de entorno según el modo
 if (mode === 'development') {
-  dotenv.config({ path: `${__dirname}/.env.development` });
+  logger.info('Entorno de desarrollo');
+  dotenv.config({ path: `.env.development` });
 } else if (mode === 'production') {
-  dotenv.config({ path: `${__dirname}/.env.production` });
+  dotenv.config({ path: `.env.production` });
 } else {
-  console.error('Please specify a valid mode (development or production)');
+  logger.error('Please specify a valid mode (development or production')
   process.exit(1);
 }
+logger.info(`${process.env.PERSISTENCE}`);
+
 
 // Exportamos la configuración
 export default {

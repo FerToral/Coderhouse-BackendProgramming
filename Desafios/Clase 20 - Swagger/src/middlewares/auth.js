@@ -35,6 +35,7 @@ export function checkUser(req, res, next) {
     return next();
   }
   // return res.status(401).render('error-page', { msg: 'please log in' });
+  req.logger.info("Redirect to Login")
   return res.redirect('/login');
 }
 
