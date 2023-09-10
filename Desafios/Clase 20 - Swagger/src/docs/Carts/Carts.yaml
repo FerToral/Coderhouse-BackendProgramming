@@ -1,7 +1,3 @@
-openapi: 3.0.0
-info:
-  title: API de Carritos
-  version: 1.0.0
 
 paths:
   /api/carts/{cid}:
@@ -189,6 +185,27 @@ paths:
                       $ref: '#/components/schemas/Product'
         '500':
           description: Error interno del servidor.
+/carts/{cid}:
+    parameters:
+      - in: path
+        name: cid
+        required: true
+        schema:
+          type: string
+        description: ID del carrito.
+    get:
+      summary: Obtiene un carrito por su ID (vistas).
+      tags:
+        - Cart
+      responses:
+        '200':
+          description: Carrito encontrado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cart'
+        '404':
+          description: Carrito no encontrado.
 
 components:
   schemas:

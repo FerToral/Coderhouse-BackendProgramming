@@ -1,0 +1,75 @@
+body {
+    background-image: linear-gradient(-225deg, #3D4E81 0%, #5753C9 48%, #6E7FF3 100%);
+ 
+}
+#span-email{
+    text-decoration: underline;
+}
+
+#input-msg{
+    padding: 6px;
+    box-sizing: border-box;
+    border: 2px solid #ccc;
+    border-radius: 4px;
+    
+}
+
+form, .table-style, .container-msgs{
+    background-color: white;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.14);
+    border-radius: 5px;
+    
+}
+table td{
+    font-weight: 400;
+    font-size: 12px;
+}
+.title-style{
+    color: white;
+    font-size: 12px;
+
+}
+.msgs-scroll{
+    max-height: 80%; /* Establece la altura máxima al 100% del contenedor padre */
+    overflow-y: auto; /* Activa el scroll vertical si el contenido excede la altura máxima */
+  }
+  
+.container-msgs{
+    height: 90vh;
+    margin-top: 10px;
+    overflow-wrap: break-word;
+}
+.welcome-title{
+    color: whitesmoke;
+    background-color: #5753c9ce;
+    border-bottom: 2px solid #a1a1a1;
+}
+.component-msgs{
+    background-color: #292c3e;
+    color: #f4f4f4;
+}
+.component-group-chats{
+    padding: 0;
+    margin: 0;
+   
+}
+.loader {
+    border: 6px solid #f3f3f3;
+    border-radius: 50%;
+    border-top: 6px solid #3498db;
+    width: 20px;
+    height: 20px;
+    -webkit-animation: spin 2s linear infinite; /* Safari */
+    animation: spin 2s linear infinite;
+  }
+  
+  /* Safari */
+  @-webkit-keyframes spin {
+    0% { -webkit-transform: rotate(0deg); }
+    100% { -webkit-transform: rotate(360deg); }
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
