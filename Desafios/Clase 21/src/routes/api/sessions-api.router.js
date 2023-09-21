@@ -10,6 +10,6 @@ sessionApiRouter.get('/perfil', isUser, sessionController.getProfile);
   
 sessionApiRouter.get('/administracion', isUser, isAdmin, sessionController.testAdmin);
 
-sessionApiRouter.use('/current', sessionController.current);
+sessionApiRouter.get('/current', sessionController.current);
 
 export default sessionApiRouter;

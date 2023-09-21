@@ -1,0 +1,15 @@
+<ul class="list-group mb-4">
+            <li class="list-group-item">Title: {{product.title}}</li>
+            <li class="list-group-item">Description: {{product.description}}</li>
+            <li class="list-group-item">Price: {{product.price}}</li>
+            <li class="list-group-item">Code: {{product.code}}</li>
+            <li class="list-group-item">Stock: {{product.stock}}</li>
+            <li class="list-group-item">Category:{{product.category}}</li>
+            <li class="list-group-item">Thumbnail:<a href="{{product.thumbnail}}">Product's Image</a></li>
+            <li class="list-group-item">
+                <div class="d-flex justify-content-between">
+                    <a class="btn btn-secondary" href="javascript:history.back()" role="button">Back List</a>
+                    <button type="button" class="btn btn-primary" value={{_id}}>Add to Cart</button>
+                </div>
+            </li>
+</ul>
