@@ -1,0 +1,361 @@
+openapi: 3.0.0
+info:
+  title: API de Productos
+  version: 1.0.0
+
+paths:
+  /api/products:
+    get:
+      summary: Obtiene una lista paginada de productos.
+      tags:
+        - Products
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+            minimum: 1
+          description: Número de página.
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+          description: Cantidad de productos por página.
+      responses:
+        '200':
+          description: Lista paginada de productos.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: 'success'
+                  msg:
+                    type: string
+                    example: 'Product list'
+                  data:
+                    type: object
+                    properties:
+                      payload:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Product'
+                      totalPages:
+                        type: integer
+                        example: 5
+                      prevPage:
+                        type: integer
+                        example: 1
+                      nextPage:
+                        type: integer
+                        example: 2
+                      page:
+                        type: integer
+                        example: 1
+                      hasPrevPage:
+                        type: boolean
+                        example: false
+                      hasNextPage:
+                        type: boolean
+                        example: true
+                      prevLink:
+                        type: string
+                        example: '/api/products?page=1&limit=10'
+                      nextLink:
+                        type: string
+                        example: '/api/products?page=2&limit=10'
+
+    post:
+      summary: Crea un nuevo producto.
+      tags:
+        - Products
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductCreate'
+      responses:
+        '201':
+          description: Producto creado exitosamente.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '400':
+          description: Error al crear el producto.
+        '500':
+          description: Error interno del servidor.
+
+  /api/products/{pid}:
+    parameters:
+      - in: path
+        name: pid
+        required: true
+        schema:
+          type: string
+        description: ID del producto.
+    get:
+      summary: Obtiene un producto por su ID.
+      tags:
+        - Products
+      responses:
+        '200':
+          description: Producto encontrado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '404':
+          description: Producto no encontrado.
+
+    put:
+      summary: Actualiza un producto por su ID.
+      tags:
+        - Products
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductUpdate'
+      responses:
+        '200':
+          description: Producto actualizado exitosamente.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '400':
+          description: Error al actualizar el producto.
+        '404':
+          description: Producto no encontrado.
+        '500':
+          description: Error interno del servidor.
+
+    delete:
+      summary: Elimina un producto por su ID.
+      tags:
+        - Products
+      responses:
+        '200':
+          description: Producto eliminado exitosamente.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '404':
+          description: Producto no encontrado.
+        '500':
+          description: Error interno del servidor.
+
+  /products:
+    get:
+      summary: Obtiene una lista paginada de productos (vistas).
+      tags:
+        - Products
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+            minimum: 1
+          description: Número de página.
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+          description: Cantidad de productos por página.
+      responses:
+        '200':
+          description: Lista paginada de productos.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: 'success'
+                  msg:
+                    type: string
+                    example: 'Product list'
+                  data:
+                    type: object
+                    properties:
+                      payload:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Product'
+                      totalPages:
+                        type: integer
+                        example: 5
+                      prevPage:
+                        type: integer
+                        example: 1
+                      nextPage:
+                        type: integer
+                        example: 2
+                      page:
+                        type: integer
+                        example: 1
+                      hasPrevPage:
+                        type: boolean
+                        example: false
+                      hasNextPage:
+                        type: boolean
+                        example: true
+                      prevLink:
+                        type: string
+                        example: '/products?page=1&limit=10'
+                      nextLink:
+                        type: string
+                        example: '/products?page=2&limit=10'
+
+  /products/{pid}:
+    parameters:
+      - in: path
+        name: pid
+        required: true
+        schema:
+          type: string
+        description: ID del producto.
+    get:
+      summary: Obtiene un producto por su ID (vistas).
+      tags:
+        - Products
+      responses:
+        '200':
+          description: Producto encontrado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '404':
+          description: Producto no encontrado.
+  /products/realtimeproducts:
+    get:
+      summary: Obtiene una lista en tiempo real de productos para visualización.
+      tags:
+        - Products
+      responses:
+        '200':
+          description: Lista en tiempo real de productos para visualización.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: 'success'
+                  msg:
+                    type: string
+                    example: 'Real-time Product list'
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Product'
+
+
+
+components:
+  schemas:
+    Product:
+      type: object
+      properties:
+        _id:
+          type: string
+          example: '12345'
+        title:
+          type: string
+          example: 'Producto de ejemplo'
+        description:
+          type: string
+          example: 'Descripción del producto'
+        price:
+          type: number
+          example: 25.99
+        stock:
+          type: integer
+          example: 100
+        thumbnails:
+          type: array
+          items:
+            type: string
+          example: ['https://example.com/image1.jpg', 'https://example.com/image2.jpg']
+        status:
+          type: boolean
+          example: true
+        code:
+          type: string
+          example: 'ABC123'
+        category:
+          type: string
+          example: 'Electrónica'
+
+    ProductCreate:
+      type: object
+      properties:
+        title:
+          type: string
+          example: 'Producto de ejemplo'
+        description:
+          type: string
+          example: 'Descripción del producto'
+        price:
+          type: number
+          example: 25.99
+        stock:
+          type: integer
+          example: 100
+        thumbnails:
+          type: array
+          items:
+            type: string
+          example: ['https://example.com/image1.jpg', 'https://example.com/image2.jpg']
+        status:
+          type: boolean
+          example: true
+        code:
+          type: string
+          example: 'ABC123'
+        category:
+          type: string
+          example: 'Electrónica'
+
+    ProductUpdate:
+      type: object
+      properties:
+        title:
+          type: string
+          example: 'Nuevo título'
+        description:
+          type: string
+          example: 'Nueva descripción'
+        price:
+          type: number
+          example: 29.99
+        stock:
+          type: integer
+          example: 90
+        thumbnails:
+          type: array
+          items:
+            type: string
+          example: ['https://example.com/new-image.jpg']
+        status:
+          type: boolean
+          example: false
+        code:
+          type: string
+          example: 'XYZ789'
+        category:
+          type: string
+          example: 'Muebles'
